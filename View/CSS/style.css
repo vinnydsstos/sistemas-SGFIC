@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Oswald&display=swap');
+
+.navbar-brand{
+    font-family: 'Acme';
+}
+
+.nav-link{
+    font-family: Oswald;
+}
+
+.navbar {
+  background-color: #dc3545 !important; /* Vermelho */
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #fff; /* Branco */
+}
+
+html {
+  background-color: #ffffff;
+  opacity: 0.8;
+  background-image: radial-gradient(#f74a45 0.5px, #ffffff 0.5px);
+  background-size: 10px 10px;
+}
+
+body{
+  background-color: white;
+
+}
+
+.card-color{
+  background-color: #dc3545;
+}
+
+.nome-turma{
+  color:#fff;
+}
