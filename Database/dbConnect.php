@@ -8,7 +8,7 @@ class Connect {
 
     public static function getConnection() {
         if (self::$connect == null) {
-            $servername = "localhost:3307";
+            $servername = "localhost:3306";
             $username = "root";
             $password = "";
             $db_name = "SGFIC";
