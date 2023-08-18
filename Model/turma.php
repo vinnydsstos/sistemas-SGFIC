@@ -53,7 +53,7 @@ class Turma {
         return $turmas;
     }
 
-    public function buscarPorId($idTurma){
+    public static function buscarPorId($idTurma){
         $sqlBuscar = "SELECT * FROM Turma WHERE idTurma = " . $idTurma;
         $rs = Connect::getConnection()->query($sqlBuscar);
         $row = mysqli_fetch_row($rs);

@@ -65,7 +65,7 @@ class Encontro
         return $encontros;
     }
 
-    public function buscarPorId($idEncontro)
+    public static function buscarPorId($idEncontro)
     {
         $sqlBuscar = "SELECT * FROM Encontro WHERE idEncontro = " . $idEncontro;
         $rs = Connect::getConnection()->query($sqlBuscar);

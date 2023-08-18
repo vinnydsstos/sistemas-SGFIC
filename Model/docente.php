@@ -27,7 +27,7 @@ class Docente {
         Connect::getConnection()->query($sqlDeletar);
     }
 
-    public function buscarTodos() {
+    public static function buscarTodos() {
         $sqlBuscar = "SELECT * FROM Docente";
         $rs = Connect::getConnection()->query($sqlBuscar);
         $docentes = array();
@@ -45,7 +45,7 @@ class Docente {
         return $docentes;
     }
 
-    public function buscarPorNif($nif){
+    public static function buscarPorNif($nif){
         $sqlBuscar = "SELECT * FROM Docente WHERE nif = " . $nif;
         $rs = Connect::getConnection()->query($sqlBuscar);
         $row = mysqli_fetch_row($rs);
