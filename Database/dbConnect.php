@@ -1,18 +1,15 @@
 <?php
 
-// Conexão com banco de dados
+require_once '../config.php';
 
 class Connect {
 
     static $connect;
 
     public static function getConnection() {
+        global $servername, $username, $password, $db_name;
+        
         if (self::$connect == null) {
-            $servername = "localhost:3306";
-            $username = "root";
-            $password = "";
-            $db_name = "SGFIC";
-
             self::$connect = new mysqli($servername, $username, $password, $db_name);
 
             if (mysqli_connect_error()):
