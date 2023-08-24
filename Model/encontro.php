@@ -5,12 +5,12 @@ include_once '../Database/dbConnect.php';
 class Encontro
 {
 
-    public $idEncontro;
-    public $dataDoEncontro;
-    public $inicio;
-    public $termino;
-    public $idTurma;
-    public $idAmbiente;
+    private $idEncontro;
+    private $dataDoEncontro;
+    private $inicio;
+    private $termino;
+    private $idTurma;
+    private $idAmbiente;
 
     public function salvar()
     {
@@ -21,13 +21,11 @@ class Encontro
                 throw new Exception("Erro na conexão com o banco de dados: " . $conn->connect_error);
             }
 
-            $stringSalvar = "INSERT INTO Encontro(dataDoEncontro, inicio, termino, idTurma, idAmbiente) 
-                        VALUES ('" . $this->dataDoEncontro . "', '" . $this->inicio . "', '" . $this->termino . "', 
-                                " . $this->idTurma . ", " . $this->idAmbiente . ")";
-
-            $conn->query($stringSalvar);
-
-            //$conn->close();
+            $stmt = $conn->prepare("INSERT INTO Encontro(dataDoEncontro, inicio, termino, idTurma, idAmbiente) 
+                                    VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssi", $this->dataDoEncontro, $this->inicio, $this->termino, $this->idTurma, $this->idAmbiente);
+            $stmt->execute();
+            $stmt->close();
         } catch (Exception $e) {
             die($e->getMessage());
         }
@@ -35,16 +33,21 @@ class Encontro
 
     public function atualizar()
     {
-        $stringAtualizar = "UPDATE Encontro SET dataDoEncontro = '" . $this->dataDoEncontro . "', inicio = '" . $this->inicio . "', 
-                            termino = '" . $this->termino . "', idTurma = " . $this->idTurma . ", idAmbiente = " . $this->idAmbiente . " 
-                            WHERE idEncontro = " . $this->idEncontro;
-        Connect::getConnection()->query($stringAtualizar);
+        $conexao = Connect::getConnection();
+        $stmt = $conexao->prepare("UPDATE Encontro SET dataDoEncontro = ?, inicio = ?, termino = ?, idTurma = ?, idAmbiente = ? 
+                                   WHERE idEncontro = ?");
+        $stmt->bind_param("ssssii", $this->dataDoEncontro, $this->inicio, $this->termino, $this->idTurma, $this->idAmbiente, $this->idEncontro);
+        $stmt->execute();
+        $stmt->close();
     }
 
     public function deletar()
     {
-        $sqlDeletar = "DELETE FROM Encontro WHERE idEncontro = " . $this->idEncontro;
-        Connect::getConnection()->query($sqlDeletar);
+        $conexao = Connect::getConnection();
+        $stmt = $conexao->prepare("DELETE FROM Encontro WHERE idEncontro = ?");
+        $stmt->bind_param("i", $this->idEncontro);
+        $stmt->execute();
+        $stmt->close();
     }
 
     public static function buscarTodos()
@@ -201,21 +204,18 @@ class Encontro
         return $encontros;
     }
 
+
     public static function verificarConflitos($encontros, $turma)
     {
-        // Array para armazenar os encontros com conflitos
         $conflitos = [];
 
         try {
-            // Conectar ao banco de dados
             $conn = Connect::getConnection();
 
-            // Verificar se houve algum erro na conexão
             if ($conn->connect_error) {
                 die("Erro na conexão com o banco de dados: " . $conn->connect_error);
             }
 
-            // Consultar o banco de dados para verificar os conflitos
             $sql = 'SELECT
                         Encontro.idEncontro,
                         Encontro.dataDoEncontro,
@@ -235,48 +235,102 @@ class Encontro
                     AND (inicio <= ? AND termino >= ?)
                     AND idDocenteResponsavel = ?';
 
-            // Preparar a consulta
             $stmt = $conn->prepare($sql);
             foreach ($encontros as $encontro) {
-                
+
                 $stmt->bind_param(
                     'ssss',
                     $encontro->dataDoEncontro,
                     $encontro->inicio,
                     $encontro->termino,
-                    $turma->idDocenteResponsavel
+                    $encontro->idDocenteResponsavel
                 );
 
-                // Executar a consulta
                 $stmt->execute();
 
-                // Fetch the result as an associative array
                 $result = $stmt->get_result();
 
-                // Verificar se há conflitos e adicionar à lista de conflitos, se necessário
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $conflito = new Encontro();
-                        $conflito->idEncontro = $row['idEncontro'];
-                        $conflito->dataDoEncontro = $row['dataDoEncontro'];
-                        $conflito->inicio = $row['hora_inicio'];
-                        $conflito->termino = $row['hora_termino'];
-                        $conflito->idTurma = $row['nome_turma'];
-                        $conflito->idAmbiente = $row['Identificador'];
+                        $conflito->setIdEncontro($row['idEncontro']);
+                        $conflito->setDataDoEncontro($row['dataDoEncontro']);
+                        $conflito->setInicio($row['hora_inicio']);
+                        $conflito->setTermino($row['hora_termino']);
+                        $conflito->setIdTurma($row['nome_turma']);
+                        $conflito->setIdAmbiente($row['Identificador']);
                         $conflitos[] = $conflito;
                     }
                 }
             }
 
-            // Fechar a conexão com o banco de dados
             $stmt->close();
             //$conn->close();
 
-            // Retornar a lista de encontros com conflitos
             return $conflitos;
         } catch (Exception $e) {
-            // Tratar o erro de conexão com o banco de dados
             die("Erro na conexão com o banco de dados: " . $e->getMessage());
         }
+    }
+
+
+    public function setIdEncontro($idEncontro)
+    {
+        $this->idEncontro = $idEncontro;
+    }
+
+    public function getIdEncontro()
+    {
+        return $this->idEncontro;
+    }
+
+    public function setDataDoEncontro($dataDoEncontro)
+    {
+        $this->dataDoEncontro = $dataDoEncontro;
+    }
+
+    public function getDataDoEncontro()
+    {
+        return $this->dataDoEncontro;
+    }
+
+    public function setInicio($inicio)
+    {
+        $this->inicio = $inicio;
+    }
+
+    public function getInicio()
+    {
+        return $this->inicio;
+    }
+
+    public function setTermino($termino)
+    {
+        $this->termino = $termino;
+    }
+
+    public function getTermino()
+    {
+        return $this->termino;
+    }
+
+    public function setIdTurma($idTurma)
+    {
+        $this->idTurma = $idTurma;
+    }
+
+    public function getIdTurma()
+    {
+        return $this->idTurma;
+    }
+
+    public function setIdAmbiente($idAmbiente)
+    {
+        $this->idAmbiente = $idAmbiente;
+    }
+
+    public function getIdAmbiente()
+    {
+        return $this->idAmbiente;
     }
 }

@@ -32,7 +32,7 @@ $docentes = Docente::buscarTodos();
             <select class="form-control" id="filterByDocente">
                 <option value="">Todos os Docentes</option>
                 <?php foreach ($docentes as $docente) { ?>
-                    <option value="<?php echo $docente->NomeCompleto; ?>"><?php echo $docente->NomeCompleto; ?></option>
+                    <option value="<?php echo $docente->getNomeCompleto(); ?>"><?php echo $docente->getNomeCompleto(); ?></option>
                 <?php } ?>
             </select>
         </div>
@@ -53,34 +53,34 @@ $docentes = Docente::buscarTodos();
                 // Loop to display each encontro in the table
                 foreach ($encontros as $encontro) {
                     // Fetch the name of the turma based on the encontro's turma ID
-                    $turma = Turma::buscarPorId($encontro->idTurma);
+                    $turma = Turma::buscarPorId($encontro->getIdTurma());
                     // Fetch the ambiente's identifier based on the encontro's ambiente ID
-                    $ambiente = Ambiente::buscarPorId($encontro->idAmbiente);
+                    $ambiente = Ambiente::buscarPorId($encontro->getIdAmbiente());
                     // Fetch the responsible docente based on the encontro's docente ID
-                    $docente = Docente::buscarPorNif($turma->idDocenteResponsavel);
+                    $docente = Docente::buscarPorNif($turma->getIdDocenteResponsavel());
 
                     echo "<tr>";
-                    echo "<td>{$docente->NomeCompleto}</td>";
-                    echo "<td>{$turma->nome}</td>";
-                    echo "<td>{$ambiente->identificador}</td>";
-                    echo "<td>" . date('d/m/Y', strtotime($encontro->dataDoEncontro)) . "</td>";
-                    echo "<td>{$encontro->inicio} - {$encontro->termino}</td>";
+                    echo "<td>{$docente->getNomeCompleto()}</td>";
+                    echo "<td>{$turma->getNome()}</td>";
+                    echo "<td>{$ambiente->getIdentificador()}</td>";
+                    echo "<td>" . date('d/m/Y', strtotime($encontro->getDataDoEncontro())) . "</td>";
+                    echo "<td>{$encontro->getInicio()} - {$encontro->getTermino()}</td>";
                     echo "<td>";
-                    echo "<a href='editarEncontro.php?id={$encontro->idEncontro}' class='btn btn-sm btn-primary'>
+                    echo "<a href='editarEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-sm btn-primary'>
                         <i class='bi bi-pencil'></i>
                     </a>";
-                    echo "<a href='#' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#deleteModal-{$encontro->idEncontro}'>
+                    echo "<a href='#' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#deleteModal-{$encontro->getIdEncontro()}'>
                         <i class='bi bi-trash'></i>
                     </a>";
                     echo "</td>";
                     echo "</tr>";
 
                     // Delete Modal
-                    echo "<div class='modal fade' id='deleteModal-{$encontro->idEncontro}' tabindex='-1' role='dialog' aria-labelledby='deleteModalLabel-{$encontro->idEncontro}' aria-hidden='true'>";
+                    echo "<div class='modal fade' id='deleteModal-{$encontro->getIdEncontro()}' tabindex='-1' role='dialog' aria-labelledby='deleteModalLabel-{$encontro->getIdEncontro()}' aria-hidden='true'>";
                     echo "<div class='modal-dialog' role='document'>";
                     echo "<div class='modal-content'>";
                     echo "<div class='modal-header'>";
-                    echo "<h5 class='modal-title' id='deleteModalLabel-{$encontro->idEncontro}'>Confirmar Exclusão</h5>";
+                    echo "<h5 class='modal-title' id='deleteModalLabel-{$encontro->getIdEncontro()}'>Confirmar Exclusão</h5>";
                     echo "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>";
                     echo "<span aria-hidden='true'>&times;</span>";
                     echo "</button>";
@@ -90,7 +90,7 @@ $docentes = Docente::buscarTodos();
                     echo "</div>";
                     echo "<div class='modal-footer'>";
                     echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancelar</button>";
-                    echo "<a href='excluirEncontro.php?id={$encontro->idEncontro}' class='btn btn-danger'>Excluir</a>";
+                    echo "<a href='excluirEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-danger'>Excluir</a>";
                     echo "</div>";
                     echo "</div>";
                     echo "</div>";

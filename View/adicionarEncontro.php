@@ -6,12 +6,27 @@ include_once '../Model/encontro.php';
 include_once 'verificador.php';
 
 
+function formatarTurma($turmas){
+    $formattedTurmas = array();
+    foreach ($turmas as $turma) {
+        $formattedTurmas[] = array(
+            'idTurma' => $turma->getIdTurma(),
+            'nome' => $turma->getNome(),
+            'idDocenteResponsavel' => $turma->getIdDocenteResponsavel(),
+            'idCurso' => $turma->getIdCurso(),
+            'numeroDeVagas' => $turma->getNumeroDeVagas(),
+            'dataDeInicio' => $turma->getDataDeInicio(),
+            'dataDeFinalizacao' => $turma->getDataDeFinalizacao(),
+            'status' => $turma->getStatus()
+        );
+    }
+    return $formattedTurmas;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // Buscar todas as turmas do banco de dados
     $turmas = Turma::buscarTodos();
-
-    // Buscar todos os ambientes do banco de dados
     $ambientes = Ambiente::buscarTodos();
 }
 
@@ -26,8 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $termino = $_POST['termino'];
     $ambienteId = $_POST['ambiente'];
 
+
     // Buscar todas as turmas do banco de dados
     $turmas = Turma::buscarTodos();
+
 
     // Buscar todos os ambientes do banco de dados
     $ambientes = Ambiente::buscarTodos();
@@ -39,11 +56,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Salvar os encontros no banco de dados
     foreach ($selectedDates as $dateStr) {
         $encontro = new Encontro();
-        $encontro->dataDoEncontro = date('Y-m-d', strtotime(str_replace('/', '-', $dateStr)));
-        $encontro->inicio = $inicio;
-        $encontro->termino = $termino;
-        $encontro->idTurma = $turmaId;
-        $encontro->idAmbiente = $ambienteId;
+
+        $dateFormatted = date('Y-m-d', strtotime(str_replace('/', '-', $dateStr)));
+        $encontro->setDataDoEncontro($dateFormatted);
+        $encontro->setInicio($_POST['inicio']);
+        $encontro->setTermino($_POST['termino']);
+        $encontro->setIdTurma($_POST['turma']);
+        $encontro->setIdAmbiente($_POST['ambiente']);
 
         array_push($encontros, $encontro);
     }
@@ -62,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Salvar os encontros no banco de dados
         foreach ($encontros as $encontro) {
             // Verificar se o encontro deve ser agendado naquele dia da semana
-            $dayOfWeek = date('l', strtotime($encontro->dataDoEncontro));
+            $dayOfWeek = date('l', strtotime($encontro->getDataDoEncontro()));
             if (in_array($dayOfWeek, $daysOfWeek)) {
                 $encontro->salvar();
             }
@@ -176,12 +195,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select class="form-control" id="turma" name="turma" required>
                         <option value="">Selecione a turma</option>
                         <?php foreach ($turmas as $turma) { ?>
-                            <option value="<?php echo $turma->idTurma; ?>"><?php echo $turma->nome; ?></option>
+                            <option value="<?php echo $turma->getIdTurma(); ?>"><?php echo $turma->getNome(); ?></option>
                         <?php } ?>
                     </select>
                 </div>
 
-               
+
 
                 <div id="dadosDaTurmaSelecionada"></div>
 
@@ -208,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select class="form-control" id="ambiente" name="ambiente" required>
                         <option value="">Selecione o ambiente</option>
                         <?php foreach ($ambientes as $ambiente) { ?>
-                            <option value="<?php echo $ambiente->idSala; ?>"><?php echo $ambiente->identificador . " - " . $ambiente->descricao ?></option>
+                            <option value="<?php echo $ambiente->getIdSala(); ?>"><?php echo $ambiente->getIdentificador() . " - " . $ambiente->getDescricao() ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -227,18 +246,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 const ano = data.getFullYear();
                 return `${dia}/${mes}/${ano}`;
             }
-            // Função para exibir os dados da turma selecionada no div "dadosDaTurmaSelecionada"
+
             function exibirDadosTurmaSelecionada() {
                 const turmaSelecionadaId = $("#turma").val();
 
-                // Encontrar a turma selecionada na lista de turmas
-                const turmaSelecionada = <?php echo json_encode($turmas); ?>.find(turma => turma.idTurma === turmaSelecionadaId);
+                const turmaSelecionada = <?php echo json_encode(formatarTurma($turmas)); ?>.find(turma => turma.idTurma === turmaSelecionadaId);
 
                 if (turmaSelecionada) {
                     const dataInicioFormatada = formatarData(turmaSelecionada.dataDeInicio);
                     const dataFinalizacaoFormatada = formatarData(turmaSelecionada.dataDeFinalizacao);
 
-                    // Preencher o div com os dados da turma selecionada
                     $("#dadosDaTurmaSelecionada").html(`
                         <div class="card bg-warning mb-3">
                             <div class="card-body">
@@ -250,37 +267,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     `);
 
-                    // Get the selected start and end dates from the card
                     const startDateStr = turmaSelecionada.dataDeInicio;
                     const endDateStr = turmaSelecionada.dataDeFinalizacao;
 
-                    // Convert dates to JavaScript Date objects
                     const startDate = new Date(startDateStr);
                     const endDate = new Date(endDateStr);
 
-                    // Calculate all dates between start and end dates
                     const datesArray = calculateDatesBetween(startDate, endDate);
 
-                    // Get the selected days of the week
                     const selectedDays = $("input[name='days[]']:checked").map(function() {
                         return this.value;
                     }).get();
 
-                    // Filter dates to only include the selected days of the week
                     const filteredDates = datesArray.filter(date => selectedDays.includes(date.toLocaleString('en-US', {
                         weekday: 'long'
                     })));
 
-                    // Display the filtered dates in a table
                     displayPossibleDates(filteredDates);
                 } else {
-                    // Limpar o div caso nenhuma turma seja selecionada
                     $("#dadosDaTurmaSelecionada").empty();
                     $("#possiveisDatasDeEncontros").empty();
                 }
             }
 
-            // Function to calculate all dates between start and end dates
             function calculateDatesBetween(start, end) {
                 let startDate = new Date(start);
                 startDate.setDate(startDate.getDate() + 1);
@@ -296,7 +305,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return datesArray;
             }
 
-            // Function to display possible dates in a table
             function displayPossibleDates(datesArray) {
                 let tableHtml = '<table class="table table-striped  table-bordered">';
                 tableHtml += '<thead><tr><th>Data</th></tr></thead>';
@@ -313,21 +321,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 tableHtml += '</tbody></table>';
 
                 $("#possiveisDatasDeEncontros").html(tableHtml);
-                
+
                 $("#botoesDeControle").css("display", "inline");
             }
 
-            // Evento de mudança na seleção da turma
             $("#turma").on("change", function() {
                 exibirDadosTurmaSelecionada();
             });
 
-            // Evento de mudança na seleção dos dias da semana
             $("input[name='days[]']").on("change", function() {
                 exibirDadosTurmaSelecionada();
             });
 
-            // Exibir os dados da turma selecionada quando a página carregar
             exibirDadosTurmaSelecionada();
 
 
@@ -336,7 +341,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $("input[name='selectedDates[]']").prop("checked", true);
             }
 
-            // Function to deselect all dates
             function deselectAllDates() {
                 $("input[name='selectedDates[]']").prop("checked", false);
             }

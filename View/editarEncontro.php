@@ -28,11 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($encontro) {
             // Atualize os dados do encontro com os valores do formulário
-            $encontro->dataDoEncontro = $_POST['data_do_encontro'];
-            $encontro->inicio = $_POST['inicio'];
-            $encontro->termino = $_POST['termino'];
-            $encontro->idTurma = $_POST['turma'];
-            $encontro->idAmbiente = $_POST['ambiente'];
+            $encontro->setDataDoEncontro($_POST['data_do_encontro']);
+            $encontro->setInicio($_POST['inicio']);
+            $encontro->setTermino($_POST['termino']);
+            $encontro->setIdTurma($_POST['turma']);
+            $encontro->setIdAmbiente($_POST['ambiente']);
 
             // Salve as alterações no banco de dados
             $encontro->atualizar();
@@ -86,28 +86,28 @@ if (isset($_GET['id'])) {
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <form method="POST" action="editarEncontro.php">
             <!-- Inclua um campo oculto para enviar o ID do encontro -->
-            <input type="hidden" name="idEncontro" value="<?php echo $encontro->idEncontro; ?>">
+            <input type="hidden" name="idEncontro" value="<?php echo $encontro->getIdEncontro(); ?>">
 
             <div class="form-group">
                 <label for="data_do_encontro">Data do Encontro:</label>
-                <input type="date" class="form-control" id="data_do_encontro" name="data_do_encontro" value="<?php echo $encontro->dataDoEncontro; ?>" required>
+                <input type="date" class="form-control" id="data_do_encontro" name="data_do_encontro" value="<?php echo $encontro->getDataDoEncontro(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="inicio">Horário de Início:</label>
-                <input type="time" class="form-control" id="inicio" name="inicio" value="<?php echo $encontro->inicio; ?>" required>
+                <input type="time" class="form-control" id="inicio" name="inicio" value="<?php echo $encontro->getInicio(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="termino">Horário de Término:</label>
-                <input type="time" class="form-control" id="termino" name="termino" value="<?php echo $encontro->termino; ?>" required>
+                <input type="time" class="form-control" id="termino" name="termino" value="<?php echo $encontro->getTermino(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="turma">Turma:</label>
                 <select class="form-control" id="turma" name="turma" required>
                     <option value="">Selecione a turma</option>
                     <?php foreach ($turmas as $turma) { ?>
-                        <option value="<?php echo $turma->idTurma; ?>" <?php if ($encontro->idTurma === $turma->idTurma) {
+                        <option value="<?php echo $turma->getIdTurma(); ?>" <?php if ($encontro->getIdTurma() === $turma->getIdTurma()) {
                                                                             echo "selected";
-                                                                        } ?>><?php echo $turma->nome; ?></option>
+                                                                        } ?>><?php echo $turma->getNome(); ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -116,11 +116,11 @@ if (isset($_GET['id'])) {
                 <select class="form-control" id="ambiente" name="ambiente" required>
                     <option value="">Selecione o ambiente</option>
                     <?php foreach ($ambientes as $ambiente) { ?>
-                        <option value="<?php echo $ambiente->idSala; ?>" <?php if ($encontro->idAmbiente === $ambiente->idSala) {
+                        <option value="<?php echo $ambiente->getIdSala(); ?>" <?php if ($encontro->getIdAmbiente() === $ambiente->getIdSala()) {
                                                                                     echo "selected";
                                                                                 }
                                                                                 ?>>
-                            <?php echo $ambiente->identificador . " - " . $ambiente->descricao ?>
+                            <?php echo $ambiente->getIdentificador() . " - " . $ambiente->getDescricao(); ?>
                         </option>
                     <?php } ?>
                 </select>

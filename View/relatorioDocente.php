@@ -46,18 +46,18 @@ $ambientesData = [];
 
 // Fetch Turma data and store it in the associative array
 foreach ($turmas as $turma) {
-    $turmasData[$turma->idTurma] = $turma;
+    $turmasData[$turma->getIdTurma()] = $turma;
 }
 
 // Fetch Ambiente data and store it in the associative array
 foreach ($ambientes as $ambiente) {
-    $ambientesData[$ambiente->idSala] = $ambiente;
+    $ambientesData[$ambiente->getIdSala()] = $ambiente;
 }
 
 // Obtém os encontros agrupados por turma
 $encontrosPorTurma = [];
 foreach ($encontros as $encontro) {
-    $turmaId = $encontro->idTurma;
+    $turmaId = $encontro->getIdTurma();
     if (!isset($encontrosPorTurma[$turmaId])) {
         $encontrosPorTurma[$turmaId] = [];
     }
@@ -71,7 +71,7 @@ $totalHorasAgendadasPorTurma = [];
 // Obtém os encontros agrupados por turma e realiza as somatórias
 $encontrosPorTurma = [];
 foreach ($encontros as $encontro) {
-    $turmaId = $encontro->idTurma;
+    $turmaId = $encontro->getIdTurma();
     if (!isset($encontrosPorTurma[$turmaId])) {
         $encontrosPorTurma[$turmaId] = [];
     }
@@ -79,8 +79,8 @@ foreach ($encontros as $encontro) {
 
     $totalEncontrosPorTurma[$turmaId] = isset($totalEncontrosPorTurma[$turmaId]) ? $totalEncontrosPorTurma[$turmaId] + 1 : 1;
 
-    $inicio = new DateTime($encontro->inicio);
-    $termino = new DateTime($encontro->termino);
+    $inicio = new DateTime($encontro->getInicio());
+    $termino = new DateTime($encontro->getTermino());
     $interval = $inicio->diff($termino);
     $totalHorasAgendadasPorTurma[$turmaId] = isset($totalHorasAgendadasPorTurma[$turmaId]) ? $totalHorasAgendadasPorTurma[$turmaId] + ($interval->h * 60) + $interval->i : ($interval->h * 60) + $interval->i;
 }
@@ -115,7 +115,7 @@ foreach ($encontros as $encontro) {
                         <?php
                         // Exibir as opções do dropdown para selecionar o docente
                         foreach ($docentes as $doc) {
-                            echo "<option value='{$doc->nif}'" . ($docenteSelecionado === $doc->nif ? ' selected' : '') . ">{$doc->NomeCompleto}</option>";
+                            echo "<option value='{$doc->getNif()}'" . ($docenteSelecionado === $doc->getNif() ? ' selected' : '') . ">{$doc->getNomeCompleto()}</option>";
                         }
                         ?>
                     </select>
@@ -179,11 +179,11 @@ foreach ($encontros as $encontro) {
                     <a class="card-header card-color"  href="#collapse<?php echo $turmaId; ?>" data-toggle="collapse" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
                         <h2 class="mb-0">
                             <button class="btn" data-toggle="collapse" data-target="#collapse<?php echo $turmaId; ?>" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
-                                <strong class="nome-turma">Turma - <?php echo $turmaEncontro->nome; ?> - </strong> 
-                                <span class="badge badge-primary">Vagas: <?php echo $turmaEncontro->numeroDeVagas; ?></span>
-                                <span class="badge badge-warning">Data de Início: <?php echo $turmaEncontro->dataDeInicio; ?></span>
-                                <span class="badge badge-warning">Data de Término: <?php echo $turmaEncontro->dataDeFinalizacao; ?></span>
-                                <span class="badge badge-info">Status: <?php echo $turmaEncontro->status; ?></span>
+                                <strong class="nome-turma">Turma - <?php echo $turmaEncontro->getNome(); ?> - </strong> 
+                                <span class="badge badge-primary">Vagas: <?php echo $turmaEncontro->getNumeroDeVagas(); ?></span>
+                                <span class="badge badge-warning">Data de Início: <?php echo $turmaEncontro->getDataDeInicio(); ?></span>
+                                <span class="badge badge-warning">Data de Término: <?php echo $turmaEncontro->getDataDeFinalizacao(); ?></span>
+                                <span class="badge badge-info">Status: <?php echo $turmaEncontro->getStatus(); ?></span>
                             </button>
                         </h2>
                     </a>
@@ -203,9 +203,9 @@ foreach ($encontros as $encontro) {
                                 <tbody>
                                     <?php foreach ($encontrosTurma as $encontro) : ?>
                                         <tr>
-                                            <td><?php echo date('d/m/Y', strtotime($encontro->dataDoEncontro)); ?></td>
-                                            <td><?php echo "{$encontro->inicio} - {$encontro->termino}"; ?></td>
-                                            <?php $ambienteEncontro = $ambientesData[$encontro->idAmbiente]->identificador; ?>
+                                            <td><?php echo date('d/m/Y', strtotime($encontro->getDataDoEncontro())); ?></td>
+                                            <td><?php echo "{$encontro->getInicio()} - {$encontro->getTermino()}"; ?></td>
+                                            <?php $ambienteEncontro = $ambientesData[$encontro->getIdAmbiente()]->getIdentificador(); ?>
                                             <td><?php echo $ambienteEncontro; ?></td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -223,11 +223,7 @@ foreach ($encontros as $encontro) {
         <!-- Fim do acordeão -->
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $('#encontrosTable').DataTable();
-        });
-    </script>
+   
 </body>
 
 </html>

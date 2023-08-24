@@ -6,59 +6,43 @@ include_once '../Model/Curso.php';
 
 // Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtenha o ID da turma a ser editada
     $idTurma = $_POST['idTurma'];
-
-    // Verifique se a turma existe no banco de dados
     $turma = Turma::buscarPorId($idTurma);
-    if (!$turma) {
-        // Redirecione para a página de turmas se a turma não existir
+    
+    if ($turma) {
+        $turma->setNome($_POST['nome']);
+        $turma->setIdDocenteResponsavel($_POST['docente']);
+        $turma->setIdCurso($_POST['curso']);
+        $turma->setNumeroDeVagas($_POST['numero_vagas']);
+        $turma->setDataDeInicio($_POST['data_inicio']);
+        $turma->setDataDeFinalizacao($_POST['data_finalizacao']);
+        $turma->setStatus($_POST['status']);
+
+        $turma->atualizar();
+
+        header("Location: turmas.php");
+        exit;
+    } else {
         header("Location: turmas.php");
         exit;
     }
-
-    // Preencha a turma com os dados do formulário
-    $turma->nome = $_POST['nome'];
-    $turma->idDocenteResponsavel = $_POST['docente'];
-    $turma->idCurso = $_POST['curso'];
-    $turma->numeroDeVagas = $_POST['numero_vagas'];
-    $turma->dataDeInicio = $_POST['data_inicio'];
-    $turma->dataDeFinalizacao = $_POST['data_finalizacao'];
-    $turma->status = $_POST['status'];
-
-    // Atualize a turma no banco de dados
-    $turma->atualizar();
-
-    // Redirecione para a página de turmas após a edição
-    header("Location: turmas.php");
-    exit;
 }
 
 // Verifica se o parâmetro "id" foi passado na URL
 if (isset($_GET['id'])) {
     $idTurma = $_GET['id'];
 
-    // Buscar a turma pelo ID no banco de dados
     $turma = Turma::buscarPorId($idTurma);
     if (!$turma) {
-        // Redirecione para a página de turmas se a turma não existir
-        //header("Location: turmas.php");
         exit;
     }
 
-    // Buscar todos os docentes do banco de dados
     $docentes = Docente::buscarTodos();
-
-    // Buscar todos os cursos do banco de dados
     $cursos = Curso::buscarTodos();
 } else {
-    // Se o parâmetro "id" não foi passado, redirecione para a página de turmas
-    //print_r($_POST);
     header("Location: turmas.php");
     exit;
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -74,19 +58,18 @@ if (isset($_GET['id'])) {
 <body class="container pl-0 pr-0">
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <form method="POST" action="editarTurma.php">
-            <!-- Inclua um campo oculto para enviar o ID da turma -->
-            <input type="hidden" name="idTurma" value="<?php echo $turma->idTurma; ?>">
+            <input type="hidden" name="idTurma" value="<?php echo $turma->getIdTurma(); ?>">
 
             <div class="form-group">
                 <label for="nome">Nome da Turma:</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $turma->nome; ?>" required>
+                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $turma->getNome(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="docente">Docente Responsável:</label>
                 <select class="form-control" id="docente" name="docente" required>
                     <option value="">Selecione o docente</option>
                     <?php foreach ($docentes as $docente) { ?>
-                        <option value="<?php echo $docente->nif; ?>" <?php if ($turma->idDocenteResponsavel === $docente->nif) { echo "selected"; } ?>><?php echo $docente->NomeCompleto; ?></option>
+                        <option value="<?php echo $docente->getNif(); ?>" <?php if ($turma->getIdDocenteResponsavel() === $docente->getNif()) { echo "selected"; } ?>><?php echo $docente->getNomeCompleto(); ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -95,31 +78,30 @@ if (isset($_GET['id'])) {
                 <select class="form-control" id="curso" name="curso" required>
                     <option value="">Selecione o curso</option>
                     <?php foreach ($cursos as $curso) { ?>
-                        <option value="<?php echo $curso->idCurso; ?>" <?php if ($turma->idCurso === $curso->idCurso) { echo "selected"; } ?>><?php echo $curso->nome; ?></option>
+                        <option value="<?php echo $curso->getIdCurso(); ?>" <?php if ($turma->getIdCurso() === $curso->getIdCurso()) { echo "selected"; } ?>><?php echo $curso->getNome(); ?></option>
                     <?php } ?>
                 </select>
             </div>
             <div class="form-group">
                 <label for="numero_vagas">Número de Vagas:</label>
-                <input type="number" class="form-control" id="numero_vagas" name="numero_vagas" value="<?php echo $turma->numeroDeVagas; ?>" required>
+                <input type="number" class="form-control" id="numero_vagas" name="numero_vagas" value="<?php echo $turma->getNumeroDeVagas(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="data_inicio">Data de Início:</label>
-                <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="<?php echo $turma->dataDeInicio; ?>" required>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="<?php echo $turma->getDataDeInicio(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="data_finalizacao">Data de Finalização:</label>
-                <input type="date" class="form-control" id="data_finalizacao" name="data_finalizacao" value="<?php echo $turma->dataDeFinalizacao; ?>" required>
+                <input type="date" class="form-control" id="data_finalizacao" name="data_finalizacao" value="<?php echo $turma->getDataDeFinalizacao(); ?>" required>
             </div>
-
 
             <div class="form-group">
                 <label for="status">Status:</label>
                 <select class="form-control" id="status" name="status" required>
-                    <option value="ofertado" <?php if ($turma->status === 'ofertado') { echo "selected"; } ?>>Ofertado</option>
-                    <option value="em andamento" <?php if ($turma->status === 'em andamento') { echo "selected"; } ?>>Em Andamento</option>
-                    <option value="finalizado" <?php if ($turma->status === 'finalizado') { echo "selected"; } ?>>Finalizado</option>
-                    <option value="em programacao" <?php if ($turma->status === 'em programacao') { echo "selected"; } ?>>Em Programação</option>
+                    <option value="ofertado" <?php if ($turma->getStatus() === 'ofertado') { echo "selected"; } ?>>Ofertado</option>
+                    <option value="em andamento" <?php if ($turma->getStatus() === 'em andamento') { echo "selected"; } ?>>Em Andamento</option>
+                    <option value="finalizado" <?php if ($turma->getStatus() === 'finalizado') { echo "selected"; } ?>>Finalizado</option>
+                    <option value="em programacao" <?php if ($turma->getStatus() === 'em programacao') { echo "selected"; } ?>>Em Programação</option>
                 </select>
             </div>
 

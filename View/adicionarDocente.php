@@ -6,14 +6,14 @@ include_once '../Model/Docente.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Cria um objeto Docente e preenche com os dados do formulário
     $docente = new Docente();
-    $docente->nif = $_POST['nif'];
-    $docente->NomeCompleto = $_POST['nome'];
-    $docente->areaDeAtuacao = $_POST['area'];
-    $docente->tipoDeContratacao = $_POST['tipo_contratacao'];
-    $docente->cargaHoraria = $_POST['carga_horaria'];
-    $docente->inicioDaJornada = $_POST['inicio_jornada'];
-    $docente->fimDaJornada = $_POST['fim_jornada'];
-
+    $docente->setNif($_POST['nif']);
+    $docente->setNomeCompleto($_POST['nome']);
+    $docente->setAreaDeAtuacao($_POST['area']);
+    $docente->setTipoDeContratacao($_POST['tipo_contratacao']);
+    $docente->setCargaHoraria($_POST['carga_horaria']);
+    $docente->setInicioDaJornada($_POST['inicio_jornada']);
+    $docente->setFimDaJornada($_POST['fim_jornada']);
+    
     // Salva o docente no banco de dados
     $docente->salvar();
 }

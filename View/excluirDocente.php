@@ -9,7 +9,7 @@ if (isset($_GET['id'])) {
 
     // Cria um objeto Docente com o ID fornecido
     $docente = new Docente();
-    $docente->nif = $idDocente;
+    $docente->setNif($idDocente);
 
     // Chama o método para deletar o docente
     $docente->deletar();

@@ -6,14 +6,14 @@ include_once '../Model/curso.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Cria um objeto Curso e preenche com os dados do formulário
     $curso = new Curso();
-    $curso->nome = $_POST['nome'];
-    $curso->metaDeTI = $_POST['meta_de_ti'];
-    $curso->carga_horaria = $_POST['carga_horaria'];
-    $curso->vigencia = $_POST['vigencia'];
-    $curso->descricao = $_POST['descricao'];
-    $curso->requisitos = $_POST['requisitos'];
-    $curso->Sigla = $_POST['sigla'];
-
+    $curso->setNome($_POST['nome']);
+    $curso->setMetaDeTI($_POST['meta_de_ti']);
+    $curso->setCargaHoraria($_POST['carga_horaria']);
+    $curso->setVigencia($_POST['vigencia']);
+    $curso->setDescricao($_POST['descricao']);
+    $curso->setRequisitos($_POST['requisitos']);
+    $curso->setSigla($_POST['sigla']);
+    
     // Salva o curso no banco de dados
     $curso->salvar();
     header("Location: cursos.php");

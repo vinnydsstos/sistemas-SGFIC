@@ -10,12 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($docente) {
         // Atualize os dados do docente com os valores do formulário
-        $docente->NomeCompleto = $_POST['nome_completo'];
-        $docente->areaDeAtuacao = $_POST['area_de_atuacao'];
-        $docente->tipoDeContratacao = $_POST['tipo_de_contratacao'];
-        $docente->cargaHoraria = $_POST['carga_horaria'];
-        $docente->inicioDaJornada = $_POST['inicio_da_jornada'];
-        $docente->fimDaJornada = $_POST['fim_da_jornada'];
+        $docente->setNomeCompleto($_POST['nome_completo']);
+        $docente->setAreaDeAtuacao($_POST['area_de_atuacao']);
+        $docente->setTipoDeContratacao($_POST['tipo_de_contratacao']);
+        $docente->setCargaHoraria($_POST['carga_horaria']);
+        $docente->setInicioDaJornada($_POST['inicio_da_jornada']);
+        $docente->setFimDaJornada($_POST['fim_da_jornada']);
 
         // Salve as alterações no banco de dados
         $docente->atualizar();
@@ -62,31 +62,31 @@ if (isset($_GET['nif'])) {
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <form method="POST" action="editarDocente.php">
             <!-- Inclua um campo oculto para enviar o NIF do docente -->
-            <input type="hidden" name="nif" value="<?php echo $docente->nif; ?>">
+            <input type="hidden" name="nif" value="<?php echo $docente->getNif(); ?>">
 
             <div class="form-group">
                 <label for="nome_completo">Nome Completo:</label>
-                <input type="text" class="form-control" id="nome_completo" name="nome_completo" value="<?php echo $docente->NomeCompleto; ?>" required>
+                <input type="text" class="form-control" id="nome_completo" name="nome_completo" value="<?php echo $docente->getNomeCompleto(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="area_de_atuacao">Área de Atuação:</label>
-                <input type="text" class="form-control" id="area_de_atuacao" name="area_de_atuacao" value="<?php echo $docente->areaDeAtuacao; ?>" required>
+                <input type="text" class="form-control" id="area_de_atuacao" name="area_de_atuacao" value="<?php echo $docente->getAreaDeAtuacao(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="tipo_de_contratacao">Tipo de Contratação:</label>
-                <input type="text" class="form-control" id="tipo_de_contratacao" name="tipo_de_contratacao" value="<?php echo $docente->tipoDeContratacao; ?>" required>
+                <input type="text" class="form-control" id="tipo_de_contratacao" name="tipo_de_contratacao" value="<?php echo $docente->getTipoDeContratacao(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="carga_horaria">Carga Horária:</label>
-                <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" value="<?php echo $docente->cargaHoraria; ?>" required>
+                <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" value="<?php echo $docente->getCargaHoraria(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="inicio_da_jornada">Início da Jornada:</label>
-                <input type="time" class="form-control" id="inicio_da_jornada" name="inicio_da_jornada" value="<?php echo $docente->inicioDaJornada; ?>" required>
+                <input type="time" class="form-control" id="inicio_da_jornada" name="inicio_da_jornada" value="<?php echo $docente->getInicioDaJornada(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="fim_da_jornada">Fim da Jornada:</label>
-                <input type="time" class="form-control" id="fim_da_jornada" name="fim_da_jornada" value="<?php echo $docente->fimDaJornada; ?>" required>
+                <input type="time" class="form-control" id="fim_da_jornada" name="fim_da_jornada" value="<?php echo $docente->getFimDaJornada(); ?>" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar</button>

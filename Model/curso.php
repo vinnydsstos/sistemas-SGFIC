@@ -1,107 +1,153 @@
 <?php
-// Inclua a classe de conexão com o banco de dados
+
 include_once '../Database/dbConnect.php';
 
 class Curso
 {
-    public $idCurso;
-    public $nome;
-    public $metaDeTI;
-    public $carga_horaria;
-    public $vigencia;
-    public $descricao;
-    public $requisitos;
-    public $Sigla;
+    private $idCurso;
+    private $nome;
+    private $metaDeTI;
+    private $carga_horaria;
+    private $vigencia;
+    private $descricao;
+    private $requisitos;
+    private $Sigla;
 
-    // Método para salvar um novo curso no banco de dados
     public function salvar()
     {
-        // Cria a instrução SQL para inserir um novo curso
-        $sql = "INSERT INTO Curso (nome, metaDeTI, carga_horaria, vigencia, descricao, requisitos, Sigla) 
-                VALUES ('$this->nome', '$this->metaDeTI', '$this->carga_horaria', '$this->vigencia', '$this->descricao', 
-                        '$this->requisitos', '$this->Sigla')";
-
-        // Executa a instrução SQL
-        Connect::getConnection()->query($sql);
+        $conexao = Connect::getConnection();
+        $stmt = $conexao->prepare("INSERT INTO Curso (nome, metaDeTI, carga_horaria, vigencia, descricao, requisitos, Sigla) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssss", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->Sigla);
+        $stmt->execute();
+        $stmt->close();
     }
 
-    // Método para atualizar os dados de um curso existente no banco de dados
     public function atualizar()
     {
-        // Cria a instrução SQL para atualizar os dados do curso
-        $sql = "UPDATE Curso SET nome='$this->nome', metaDeTI='$this->metaDeTI', carga_horaria='$this->carga_horaria', 
-                vigencia='$this->vigencia', descricao='$this->descricao', requisitos='$this->requisitos', 
-                Sigla='$this->Sigla' WHERE idCurso=$this->idCurso";
-
-        // Executa a instrução SQL
-        Connect::getConnection()->query($sql);
+        $conexao = Connect::getConnection();
+        $stmt = $conexao->prepare("UPDATE Curso SET nome=?, metaDeTI=?, carga_horaria=?, vigencia=?, descricao=?, requisitos=?, Sigla=? WHERE idCurso=?");
+        $stmt->bind_param("sssssssi", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->Sigla, $this->idCurso);
+        $stmt->execute();
+        $stmt->close();
     }
 
-    // Método para deletar um curso do banco de dados
     public function deletar()
     {
-        // Cria a instrução SQL para deletar o curso
-        $sql = "DELETE FROM Curso WHERE idCurso=$this->idCurso";
-
-        // Executa a instrução SQL
-        Connect::getConnection()->query($sql);
+        $conexao = Connect::getConnection();
+        $stmt = $conexao->prepare("DELETE FROM Curso WHERE idCurso=?");
+        $stmt->bind_param("i", $this->idCurso);
+        $stmt->execute();
+        $stmt->close();
     }
 
-    // Método para buscar todos os cursos do banco de dados e retorná-los como um array de objetos Curso
     public static function buscarTodos()
     {
-        // Cria a instrução SQL para buscar todos os cursos
+        $conexao = Connect::getConnection();
         $sql = "SELECT * FROM Curso ORDER BY nome";
-
-        // Executa a instrução SQL e armazena o resultado em uma variável
-        $rs = Connect::getConnection()->query($sql);
-
-        // Cria um array para armazenar os cursos encontrados
+        $rs = $conexao->query($sql);
         $cursos = array();
-
-        // Loop para criar os objetos Curso e adicioná-los ao array
-        while ($row = mysqli_fetch_assoc($rs)) {
+        while ($row = $rs->fetch_assoc()) {
             $curso = new Curso();
-            $curso->idCurso = $row['idCurso'];
-            $curso->nome = $row['nome'];
-            $curso->metaDeTI = $row['metaDeTI'];
-            $curso->carga_horaria = $row['carga_horaria'];
-            $curso->vigencia = $row['vigencia'];
-            $curso->descricao = $row['descricao'];
-            $curso->requisitos = $row['requisitos'];
-            $curso->Sigla = $row['Sigla'];
+            $curso->setIdCurso($row['idCurso']);
+            $curso->setNome($row['nome']);
+            $curso->setMetaDeTI($row['metaDeTI']);
+            $curso->setCargaHoraria($row['carga_horaria']);
+            $curso->setVigencia($row['vigencia']);
+            $curso->setDescricao($row['descricao']);
+            $curso->setRequisitos($row['requisitos']);
+            $curso->setSigla($row['Sigla']);
             $cursos[] = $curso;
         }
-
-        // Retorna o array de cursos
         return $cursos;
     }
 
-    // Método para buscar um curso pelo ID e retorná-lo como um objeto Curso
     public static function buscarPorId($idCurso)
     {
-        // Cria a instrução SQL para buscar o curso pelo ID
-        $sql = "SELECT * FROM Curso WHERE idCurso=$idCurso ";
-
-        // Executa a instrução SQL e armazena o resultado em uma variável
-        $rs = Connect::getConnection()->query($sql);
-
-        // Verifica se o curso foi encontrado
-        if ($row = mysqli_fetch_assoc($rs)) {
+        $conexao = Connect::getConnection();
+        $stmt = $conexao->prepare("SELECT * FROM Curso WHERE idCurso=?");
+        $stmt->bind_param("i", $idCurso);
+        $stmt->execute();
+        $rs = $stmt->get_result();
+        $row = $rs->fetch_assoc();
+        $stmt->close();
+        if ($row) {
             $curso = new Curso();
-            $curso->idCurso = $row['idCurso'];
-            $curso->nome = $row['nome'];
-            $curso->metaDeTI = $row['metaDeTI'];
-            $curso->carga_horaria = $row['carga_horaria'];
-            $curso->vigencia = $row['vigencia'];
-            $curso->descricao = $row['descricao'];
-            $curso->requisitos = $row['requisitos'];
-            $curso->Sigla = $row['Sigla'];
+            $curso->setIdCurso($row['idCurso']);
+            $curso->setNome($row['nome']);
+            $curso->setMetaDeTI($row['metaDeTI']);
+            $curso->setCargaHoraria($row['carga_horaria']);
+            $curso->setVigencia($row['vigencia']);
+            $curso->setDescricao($row['descricao']);
+            $curso->setRequisitos($row['requisitos']);
+            $curso->setSigla($row['Sigla']);
             return $curso;
         }
-
-        // Se o curso não for encontrado, retorna null
         return null;
+    }
+
+    public function setIdCurso($idCurso) {
+        $this->idCurso = $idCurso;
+    }
+
+    public function getIdCurso() {
+        return $this->idCurso;
+    }
+
+    public function setNome($nome) {
+        $this->nome = $nome;
+    }
+
+    public function getNome() {
+        return $this->nome;
+    }
+
+    public function setMetaDeTI($metaDeTI) {
+        $this->metaDeTI = $metaDeTI;
+    }
+
+    public function getMetaDeTI() {
+        return $this->metaDeTI;
+    }
+
+    public function setCargaHoraria($carga_horaria) {
+        $this->carga_horaria = $carga_horaria;
+    }
+
+    public function getCargaHoraria() {
+        return $this->carga_horaria;
+    }
+
+    public function setVigencia($vigencia) {
+        $this->vigencia = $vigencia;
+    }
+
+    public function getVigencia() {
+        return $this->vigencia;
+    }
+
+    public function setDescricao($descricao) {
+        $this->descricao = $descricao;
+    }
+
+    public function getDescricao() {
+        return $this->descricao;
+    }
+
+    public function setRequisitos($requisitos) {
+        $this->requisitos = $requisitos;
+    }
+
+    public function getRequisitos() {
+        return $this->requisitos;
+    }
+
+    public function setSigla($Sigla) {
+        $this->Sigla = $Sigla;
+    }
+
+    public function getSigla() {
+        return $this->Sigla;
     }
 }
 ?>

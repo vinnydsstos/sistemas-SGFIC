@@ -8,7 +8,7 @@ if (isset($_GET['id'])) {
 
     // Cria um objeto Encontro com o ID fornecido
     $encontro = new Encontro();
-    $encontro->idEncontro = $idEncontro;
+    $encontro->setIdEncontro($idEncontro);
 
     // Chama o método para excluir o encontro do banco de dados
     $encontro->deletar();

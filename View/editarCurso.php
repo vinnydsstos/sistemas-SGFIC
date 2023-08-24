@@ -16,13 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Preencha o curso com os dados do formulário
-    $curso->nome = $_POST['nome'];
-    $curso->metaDeTI = $_POST['meta_de_ti'];
-    $curso->carga_horaria = $_POST['carga_horaria'];
-    $curso->vigencia = $_POST['vigencia'];
-    $curso->descricao = $_POST['descricao'];
-    $curso->requisitos = $_POST['requisitos'];
-    $curso->Sigla = $_POST['sigla'];
+    $curso->setNome($_POST['nome']);
+    $curso->setMetaDeTI($_POST['meta_de_ti']);
+    $curso->setCargaHoraria($_POST['carga_horaria']);
+    $curso->setVigencia($_POST['vigencia']);
+    $curso->setDescricao($_POST['descricao']);
+    $curso->setRequisitos($_POST['requisitos']);
+    $curso->setSigla($_POST['sigla']);
 
     // Atualize o curso no banco de dados
     $curso->atualizar();
@@ -45,7 +45,7 @@ if (isset($_GET['id'])) {
     }
 
     // Formate a data de vigência no formato correto para o input
-    $vigenciaFormatted = date('Y-m-d', strtotime($curso->vigencia));
+    $vigenciaFormatted = date('Y-m-d', strtotime($curso->getVigencia()));
 } else {
     // Se o parâmetro "id" não foi passado, redirecione para a página de cursos
     header("Location: cursos.php");
@@ -67,22 +67,22 @@ if (isset($_GET['id'])) {
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <form method="POST" action="editarCurso.php">
             <!-- Inclua um campo oculto para enviar o ID do curso -->
-            <input type="hidden" name="idCurso" value="<?php echo $curso->idCurso; ?>">
+            <input type="hidden" name="idCurso" value="<?php echo $curso->getIdCurso(); ?>">
 
             <div class="form-group">
                 <label for="nome">Nome do Curso:</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $curso->nome; ?>" required>
+                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $curso->getNome(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="meta_de_ti">Meta de TI:</label>
                 <select class="form-control" id="meta_de_ti" name="meta_de_ti">
-                    <option value="1" <?php if ($curso->metaDeTI === 1) { echo "selected"; } ?>>Sim</option>
-                    <option value="0" <?php if ($curso->metaDeTI === 0) { echo "selected"; } ?>>Não</option>
+                    <option value="1" <?php if ($curso->getMetaDeTI() === 1) { echo "selected"; } ?>>Sim</option>
+                    <option value="0" <?php if ($curso->getMetaDeTI() === 0) { echo "selected"; } ?>>Não</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="carga_horaria">Carga Horária:</label>
-                <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" value="<?php echo $curso->carga_horaria; ?>" required>
+                <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" value="<?php echo $curso->getCargaHoraria(); ?>" required>
             </div>
             <div class="form-group">
                 <label for="vigencia">Vigência:</label>
@@ -90,15 +90,15 @@ if (isset($_GET['id'])) {
             </div>
             <div class="form-group">
                 <label for="descricao">Descrição:</label>
-                <textarea class="form-control" id="descricao" name="descricao" rows="3"><?php echo $curso->descricao; ?></textarea>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3"><?php echo $curso->getDescricao(); ?></textarea>
             </div>
             <div class="form-group">
                 <label for="requisitos">Requisitos:</label>
-                <textarea class="form-control" id="requisitos" name="requisitos" rows="3"><?php echo $curso->requisitos; ?></textarea>
+                <textarea class="form-control" id="requisitos" name="requisitos" rows="3"><?php echo $curso->getRequisitos(); ?></textarea>
             </div>
             <div class="form-group">
                 <label for="sigla">Sigla:</label>
-                <input type="text" class="form-control" id="sigla" name="sigla" value="<?php echo $curso->Sigla; ?>" required>
+                <input type="text" class="form-control" id="sigla" name="sigla" value="<?php echo $curso->getSigla(); ?>" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar</button>

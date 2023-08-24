@@ -33,33 +33,33 @@
                 // Loop para exibir cada turma na tabela
                 foreach ($turmas as $turma) {
                     echo "<tr>";
-                    echo "<td>{$turma->nome}</td>";
+                    echo "<td>{$turma->getNome()}</td>";
 
                     // Verificar se há um docente responsável
-                    $docenteResponsavel = Docente::buscarPorNif($turma->idDocenteResponsavel);
+                    $docenteResponsavel = Docente::buscarPorNif($turma->getIdDocenteResponsavel());
                     if ($docenteResponsavel) {
-                        echo "<td>{$docenteResponsavel->NomeCompleto}</td>";
+                        echo "<td>{$docenteResponsavel->getNomeCompleto()}</td>";
                     } else {
                         echo "<td>---</td>";
                     }
 
                     // Verificar se há um curso
-                    $curso = Curso::buscarPorId($turma->idCurso);
+                    $curso = Curso::buscarPorId($turma->getIdCurso());
                     if ($curso) {
-                        echo "<td>{$curso->nome}</td>";
+                        echo "<td>{$curso->getNome()}</td>";
                     } else {
                         echo "<td>---</td>";
                     }
 
-                    echo "<td>" . date('d/m/Y', strtotime($turma->dataDeInicio)) . " - " . date('d/m/Y', strtotime($turma->dataDeFinalizacao)) . "</td>";
-                    echo "<td>{$turma->status}</td>";
+                    echo "<td>" . date('d/m/Y', strtotime($turma->getDataDeInicio())) . " - " . date('d/m/Y', strtotime($turma->getDataDeFinalizacao())) . "</td>";
+                    echo "<td>{$turma->getStatus()}</td>";
                     echo "<td>";
                     echo "<div class='d-flex'>";
-                    echo "<a href='editarTurma.php?id={$turma->idTurma}' class='btn btn-sm btn-primary'>
+                    echo "<a href='editarTurma.php?id={$turma->getIdTurma()}' class='btn btn-sm btn-primary'>
                             <i class='bi bi-pencil'></i>
                         </a>";
                     // Botão de exclusão com modal de confirmação
-                    echo "<button class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#modalConfirmacao{$turma->idTurma}'>
+                    echo "<button class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#modalConfirmacao{$turma->getIdTurma()}'>
                             <i class='bi bi-trash'></i>
                         </button>";
                     echo "</div>";
@@ -67,21 +67,21 @@
                     echo "</tr>";
 
                     // Modal de confirmação para exclusão
-                    echo "<div class='modal fade' id='modalConfirmacao{$turma->idTurma}' tabindex='-1' role='dialog' aria-labelledby='modalConfirmacaoLabel{$turma->idTurma}' aria-hidden='true'>";
+                    echo "<div class='modal fade' id='modalConfirmacao{$turma->getIdTurma()}' tabindex='-1' role='dialog' aria-labelledby='modalConfirmacaoLabel{$turma->getIdTurma()}' aria-hidden='true'>";
                     echo "<div class='modal-dialog' role='document'>";
                     echo "<div class='modal-content'>";
                     echo "<div class='modal-header'>";
-                    echo "<h5 class='modal-title' id='modalConfirmacaoLabel{$turma->idTurma}'>Confirmar exclusão</h5>";
+                    echo "<h5 class='modal-title' id='modalConfirmacaoLabel{$turma->getIdTurma()}'>Confirmar exclusão</h5>";
                     echo "<button type='button' class='close' data-dismiss='modal' aria-label='Fechar'>";
                     echo "<span aria-hidden='true'>&times;</span>";
                     echo "</button>";
                     echo "</div>";
                     echo "<div class='modal-body'>";
-                    echo "<p>Deseja realmente excluir a turma {$turma->nome}?</p>";
+                    echo "<p>Deseja realmente excluir a turma {$turma->getNome()}?</p>";
                     echo "</div>";
                     echo "<div class='modal-footer'>";
                     echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancelar</button>";
-                    echo "<a href='excluirTurma.php?id={$turma->idTurma}' class='btn btn-danger'>Excluir</a>";
+                    echo "<a href='excluirTurma.php?id={$turma->getIdTurma()}' class='btn btn-danger'>Excluir</a>";
                     echo "</div>";
                     echo "</div>";
                     echo "</div>";

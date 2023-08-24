@@ -1,66 +1,145 @@
-<?php
-
-include_once '../Database/dbConnect.php';
+<?php include_once '../Database/dbConnect.php';
 
 class Docente {
 
-    public $nif;
-    public $NomeCompleto;
-    public $areaDeAtuacao;
-    public $tipoDeContratacao;
-    public $cargaHoraria;
-    public $inicioDaJornada;
-    public $fimDaJornada;
+    private $nif;
+    private $NomeCompleto;
+    private $areaDeAtuacao;
+    private $tipoDeContratacao;
+    private $cargaHoraria;
+    private $inicioDaJornada;
+    private $fimDaJornada;
 
-    public function salvar(){
-        $stringSalvar = "INSERT INTO Docente(nif, NomeCompleto, areaDeAtuacao, tipoDeContratacao, cargaHoraria, inicioDaJornada, fimDaJornada) VALUES ('" . $this->nif . "', '" . $this->NomeCompleto . "', '" . $this->areaDeAtuacao . "', '" . $this->tipoDeContratacao . "', " . $this->cargaHoraria . ", '" . $this->inicioDaJornada . "', '" . $this->fimDaJornada . "')"; 
-        Connect::getConnection()->query($stringSalvar);
+    public function salvar() {
+        $conn = Connect::getConnection();
+
+        $sqlSalvar = "INSERT INTO Docente(nif, NomeCompleto, areaDeAtuacao, tipoDeContratacao, cargaHoraria, inicioDaJornada, fimDaJornada) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sqlSalvar);
+        $stmt->bind_param("ssssiss", $this->nif, $this->NomeCompleto, $this->areaDeAtuacao, $this->tipoDeContratacao, $this->cargaHoraria, $this->inicioDaJornada, $this->fimDaJornada);
+        $stmt->execute();
+        $stmt->close();
     }
 
-    public function atualizar(){
-        $stringAtualizar = "UPDATE Docente SET NomeCompleto = '" . $this->NomeCompleto . "', areaDeAtuacao = '" . $this->areaDeAtuacao . "', tipoDeContratacao = '" . $this->tipoDeContratacao . "', cargaHoraria = " . $this->cargaHoraria . ", inicioDaJornada = '" . $this->inicioDaJornada . "', fimDaJornada = '" . $this->fimDaJornada . "' WHERE nif = " . $this->nif;
-        Connect::getConnection()->query($stringAtualizar);
+    public function atualizar() {
+        $conn = Connect::getConnection();
+
+        $sqlAtualizar = "UPDATE Docente SET NomeCompleto = ?, areaDeAtuacao = ?, tipoDeContratacao = ?, cargaHoraria = ?, inicioDaJornada = ?, fimDaJornada = ? WHERE nif = ?";
+        
+        $stmt = $conn->prepare($sqlAtualizar);
+        $stmt->bind_param("ssssiss", $this->NomeCompleto, $this->areaDeAtuacao, $this->tipoDeContratacao, $this->cargaHoraria, $this->inicioDaJornada, $this->fimDaJornada, $this->nif);
+        $stmt->execute();
+        $stmt->close();
     }
 
-    public function deletar(){
-        $sqlDeletar = "DELETE FROM Docente WHERE nif = " . $this->nif;
-        Connect::getConnection()->query($sqlDeletar);
+    public function deletar() {
+        $conn = Connect::getConnection();
+
+        $sqlDeletar = "DELETE FROM Docente WHERE nif = ?";
+        $stmt = $conn->prepare($sqlDeletar);
+        $stmt->bind_param("s", $this->nif);
+        $stmt->execute();
+        $stmt->close();
     }
 
     public static function buscarTodos() {
-        $sqlBuscar = "SELECT * FROM Docente";
-        $rs = Connect::getConnection()->query($sqlBuscar);
+        $conn = Connect::getConnection();
+
+        $sqlBuscar = "SELECT * FROM Docente ORDER BY nomecompleto ASC";
+        $rs = $conn->query($sqlBuscar);
         $docentes = array();
-        while ($row = mysqli_fetch_row($rs)){
+        while ($row = mysqli_fetch_assoc($rs)) {
             $docente = new Docente();
-            $docente->nif = $row[0];
-            $docente->NomeCompleto = $row[1];
-            $docente->areaDeAtuacao = $row[2];
-            $docente->tipoDeContratacao = $row[3];
-            $docente->cargaHoraria = $row[4];
-            $docente->inicioDaJornada = $row[5];
-            $docente->fimDaJornada = $row[6];
+            $docente->setNif($row['nif']);
+            $docente->setNomeCompleto($row['NomeCompleto']);
+            $docente->setAreaDeAtuacao($row['areaDeAtuacao']);
+            $docente->setTipoDeContratacao($row['tipoDeContratacao']);
+            $docente->setCargaHoraria($row['cargaHoraria']);
+            $docente->setInicioDaJornada($row['inicioDaJornada']);
+            $docente->setFimDaJornada($row['fimDaJornada']);
             array_push($docentes, $docente);
         }
         return $docentes;
     }
 
-    public static function buscarPorNif($nif){
-        $sqlBuscar = "SELECT * FROM Docente WHERE nif = " . $nif;
-        $rs = Connect::getConnection()->query($sqlBuscar);
-        $row = mysqli_fetch_row($rs);
-        if($row){
-            $docente = new Docente();
-            $docente->nif = $row[0];
-            $docente->NomeCompleto = $row[1];
-            $docente->areaDeAtuacao = $row[2];
-            $docente->tipoDeContratacao = $row[3];
-            $docente->cargaHoraria = $row[4];
-            $docente->inicioDaJornada = $row[5];
-            $docente->fimDaJornada = $row[6];
-            return $docente;
-        }
-    }
-}
+    public static function buscarPorNif($nif) {
+        $conn = Connect::getConnection();
 
-?>
+        $sqlBuscar = "SELECT * FROM Docente WHERE nif = ?";
+        $stmt = $conn->prepare($sqlBuscar);
+        $stmt->bind_param("s", $nif);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $docente = null;
+        if ($row = $result->fetch_assoc()) {
+            $docente = new Docente();
+            $docente->setNif($row['nif']);
+            $docente->setNomeCompleto($row['NomeCompleto']);
+            $docente->setAreaDeAtuacao($row['areaDeAtuacao']);
+            $docente->setTipoDeContratacao($row['tipoDeContratacao']);
+            $docente->setCargaHoraria($row['cargaHoraria']);
+            $docente->setInicioDaJornada($row['inicioDaJornada']);
+            $docente->setFimDaJornada($row['fimDaJornada']);
+        }
+        return $docente;
+    }
+
+    
+    public function setNif($nif) {
+        $this->nif = $nif;
+    }
+
+    public function getNif() {
+        return $this->nif;
+    }
+
+    public function setNomeCompleto($NomeCompleto) {
+        $this->NomeCompleto = $NomeCompleto;
+    }
+
+    public function getNomeCompleto() {
+        return $this->NomeCompleto;
+    }
+
+    public function setAreaDeAtuacao($areaDeAtuacao) {
+        $this->areaDeAtuacao = $areaDeAtuacao;
+    }
+
+    public function getAreaDeAtuacao() {
+        return $this->areaDeAtuacao;
+    }
+
+    public function setTipoDeContratacao($tipoDeContratacao) {
+        $this->tipoDeContratacao = $tipoDeContratacao;
+    }
+
+    public function getTipoDeContratacao() {
+        return $this->tipoDeContratacao;
+    }
+
+    public function setCargaHoraria($cargaHoraria) {
+        $this->cargaHoraria = $cargaHoraria;
+    }
+
+    public function getCargaHoraria() {
+        return $this->cargaHoraria;
+    }
+
+    public function setInicioDaJornada($inicioDaJornada) {
+        $this->inicioDaJornada = $inicioDaJornada;
+    }
+
+    public function getInicioDaJornada() {
+        return $this->inicioDaJornada;
+    }
+
+    public function setFimDaJornada($fimDaJornada) {
+        $this->fimDaJornada = $fimDaJornada;
+    }
+
+    public function getFimDaJornada() {
+        return $this->fimDaJornada;
+    }
+
+}
