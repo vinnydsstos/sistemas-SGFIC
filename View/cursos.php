@@ -33,17 +33,17 @@ include_once '../sharedComponents/header.php';
                 // Loop para exibir cada curso na tabela
                 foreach ($cursos as $curso) {
                     echo "<tr>";
-                    echo "<td>{$curso->nome}</td>";
-                    echo "<td>{$curso->carga_horaria}</td>";
-                    echo "<td>{$curso->requisitos}</td>";
-                    echo "<td>{$curso->descricao}</td>";
+                    echo "<td>{$curso->getNome()}</td>";
+                    echo "<td>{$curso->getCargaHoraria()}</td>";
+                    echo "<td>{$curso->getRequisitos()}</td>";
+                    echo "<td>{$curso->getDescricao()}</td>";
                     echo "<td style='display:flex'>";
-                    echo "<a href='editarCurso.php?id={$curso->idCurso}' class='btn btn-sm btn-primary'>
+                    echo "<a href='editarCurso.php?id={$curso->getIdCurso()}' class='btn btn-sm btn-primary'>
                         <i class='bi bi-pencil'></i>
                     </a>";
 
                     // Modal for confirmation
-                    echo "<button type='button' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#confirmDeleteModal{$curso->idCurso}'>
+                    echo "<button type='button' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#confirmDeleteModal{$curso->getIdCurso()}'>
                         <i class='bi bi-trash'></i>
                     </button>";
 
@@ -69,21 +69,21 @@ include_once '../sharedComponents/header.php';
 
     <!-- Bootstrap Modal for Delete Confirmation -->
     <?php foreach ($cursos as $curso) { ?>
-        <div class="modal fade" id="confirmDeleteModal<?= $curso->idCurso ?>" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel<?= $curso->idCurso ?>" aria-hidden="true">
+        <div class="modal fade" id="confirmDeleteModal<?= $curso->getIdCurso() ?>" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel<?= $curso->getIdCurso() ?>" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="confirmDeleteModalLabel<?= $curso->idCurso ?>">Confirmar Exclusão</h5>
+                        <h5 class="modal-title" id="confirmDeleteModalLabel<?= $curso->getIdCurso() ?>">Confirmar Exclusão</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Tem certeza que deseja excluir o curso "<?= $curso->nome ?>"?
+                        Tem certeza que deseja excluir o curso "<?= $curso->getNome() ?>"?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <a href="excluirCurso.php?id=<?= $curso->idCurso ?>" class="btn btn-danger">Excluir</a>
+                        <a href="excluirCurso.php?id=<?= $curso->getIdCurso() ?>" class="btn btn-danger">Excluir</a>
                     </div>
                 </div>
             </div>

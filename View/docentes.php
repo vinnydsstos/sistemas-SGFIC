@@ -47,21 +47,22 @@
             <tbody>
                 <?php foreach ($docentes as $docente) { ?>
                     <tr>
-                        <td><?php echo $docente->nif; ?></td>
-                        <td><?php echo $docente->NomeCompleto; ?></td>
-                        <td><?php echo $docente->areaDeAtuacao; ?></td>
-                        <td><?php echo $docente->tipoDeContratacao; ?></td>
-                        <td><?php echo $docente->cargaHoraria; ?></td>
+                        <td><?php echo $docente->getNif(); ?></td>
+                        <td><?php echo $docente->getNomeCompleto(); ?></td>
+                        <td><?php echo $docente->getAreaDeAtuacao(); ?></td>
+                        <td><?php echo $docente->getTipoDeContratacao(); ?></td>
+                        <td><?php echo $docente->getCargaHoraria(); ?></td>
+
                         <td style="display:flex; ">
-                            <a href='editarDocente.php?nif=<?php echo $docente->nif; ?>' class='btn btn-sm btn-primary'>
+                            <a href='editarDocente.php?nif=<?php echo $docente->getNif(); ?>' class='btn btn-sm btn-primary'>
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <button type="button" class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#confirmModal-<?php echo $docente->nif; ?>">
+                            <button type="button" class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#confirmModal-<?php echo $docente->getNif(); ?>">
                                 <i class="bi bi-trash"></i>
                             </button>
 
                             <!-- Modal de confirmação -->
-                            <div class="modal fade" id="confirmModal-<?php echo $docente->nif; ?>" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="confirmModal-<?php echo $docente->getNif(); ?>" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -75,7 +76,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                            <a href="excluirDocente.php?id=<?php echo $docente->nif; ?>" class="btn btn-danger">Excluir</a>
+                                            <a href="excluirDocente.php?id=<?php echo $docente->getNif(); ?>" class="btn btn-danger">Excluir</a>
                                         </div>
                                     </div>
                                 </div>

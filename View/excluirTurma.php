@@ -8,7 +8,7 @@ if (isset($_GET['id'])) {
 
     // Cria um objeto Turma com o ID fornecido
     $turma = new Turma();
-    $turma->idTurma = $idTurma;
+    $turma->setIdTurma($idTurma);
 
     // Chama o método para excluir a turma do banco de dados
     $turma->deletar();

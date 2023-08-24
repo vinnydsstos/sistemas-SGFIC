@@ -8,14 +8,14 @@ include_once '../Model/Curso.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Cria um objeto Turma e preenche com os dados do formulário
     $turma = new Turma();
-    $turma->nome = $_POST['nome'];
-    $turma->idDocenteResponsavel = $_POST['docente'];
-    $turma->idCurso = $_POST['curso'];
-    $turma->numeroDeVagas = $_POST['numero_vagas'];
-    $turma->dataDeInicio = $_POST['data_inicio'];
-    $turma->dataDeFinalizacao = $_POST['data_finalizacao'];
-    $turma->status = $_POST['status'];
-
+    $turma->setNome($_POST['nome']);
+    $turma->setIdDocenteResponsavel($_POST['docente']);
+    $turma->setIdCurso($_POST['curso']);
+    $turma->setNumeroDeVagas($_POST['numero_vagas']);
+    $turma->setDataDeInicio($_POST['data_inicio']);
+    $turma->setDataDeFinalizacao($_POST['data_finalizacao']);
+    $turma->setStatus($_POST['status']);
+    
 
     // Salva a turma no banco de dados
     $turma->salvar();
@@ -55,7 +55,7 @@ $cursos = Curso::buscarTodos();
                 <select class="form-control" id="docente" name="docente" required>
                     <option value="">Selecione o docente</option>
                     <?php foreach ($docentes as $docente) { ?>
-                        <option value="<?php echo $docente->nif; ?>"><?php echo $docente->NomeCompleto; ?></option>
+                        <option value="<?php echo $docente->getNif(); ?>"><?php echo $docente->getNomeCompleto(); ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -64,7 +64,7 @@ $cursos = Curso::buscarTodos();
                 <select class="form-control" id="curso" name="curso" required>
                     <option value="">Selecione o curso</option>
                     <?php foreach ($cursos as $curso) { ?>
-                        <option value="<?php echo $curso->idCurso; ?>"><?php echo $curso->nome; ?></option>
+                        <option value="<?php echo $curso->getIdCurso(); ?>"><?php echo $curso->getNome(); ?></option>
                     <?php } ?>
                 </select>
             </div>

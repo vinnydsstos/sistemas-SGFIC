@@ -121,12 +121,12 @@ $encontros = $encontro->buscarEncontrosPorMes($mesAtual);
                                 // Buscar o nome da turma pelo ID
                                 $turmaEncontro = Turma::buscarPorId($encontroDia->idTurma);
                                 if ($turmaEncontro) {
-                                    echo "<p class='card-text'>Turma: {$turmaEncontro->nome}</p>";
+                                    echo "<p class='card-text'>Turma: {$turmaEncontro->getNome()}</p>";
                                 }
                                 // Buscar o identificador do ambiente pelo ID
                                 $ambienteEncontro = Ambiente::buscarPorId($encontroDia->idAmbiente);
                                 if ($ambienteEncontro) {
-                                    echo "<p class='card-text'>Ambiente: {$ambienteEncontro->identificador}</p>";
+                                    echo "<p class='card-text'>Ambiente: {$ambienteEncontro->getIdentificador()}</p>";
                                 }
                                 echo "</div>";
                                 echo "</div>";

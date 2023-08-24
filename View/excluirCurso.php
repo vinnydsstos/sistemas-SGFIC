@@ -8,7 +8,7 @@ if (isset($_GET['id'])) {
 
     // Cria um objeto Curso com o ID fornecido
     $curso = new Curso();
-    $curso->idCurso = $idCurso;
+    $curso->setIdCurso($idCurso);
 
     // Chama o método para excluir o curso do banco de dados
     $curso->deletar();
