@@ -2,6 +2,7 @@
 include_once '../Database/dbConnect.php';
 include_once '../Model/Turma.php';
 include_once '../Model/Ambiente.php';
+include_once '../Model/Curso.php';
 include_once '../Model/Encontro.php';
 include_once '../Model/Docente.php';
 
@@ -42,6 +43,7 @@ $docentes = Docente::buscarTodos();
                 <tr>
                     <th>Docente Responsável</th>
                     <th>Turma</th>
+                    <th>Curso</th>
                     <th>Ambiente</th>
                     <th>Data do Encontro</th>
                     <th>Início/Termino</th>
@@ -50,33 +52,32 @@ $docentes = Docente::buscarTodos();
             </thead>
             <tbody>
                 <?php
-                //print_r($encontros);
 
                 foreach ($encontros as $encontro) {
-                    // Fetch the name of the turma based on the encontro's turma ID
                     $turma = Turma::buscarPorId($encontro->getIdTurma());
-                    // Fetch the ambiente's identifier based on the encontro's ambiente ID
                     $ambiente = Ambiente::buscarPorId($encontro->getIdAmbiente());
-                    // Fetch the responsible docente based on the encontro's docente ID
                     $docente = Docente::buscarPorNif($turma->getIdDocenteResponsavel());
+                    $curso = Curso::buscarPorId($turma->getIdCurso());
 
                     echo "<tr>";
                     echo "<td>{$docente->getNomeCompleto()}</td>";
                     echo "<td>{$turma->getNome()}</td>";
+                    echo "<td>{$curso->getNome()}</td>";
                     echo "<td>{$ambiente->getIdentificador()}</td>";
                     echo "<td>" . date('d/m/Y', strtotime($encontro->getDataDoEncontro())) . "</td>";
                     echo "<td>{$encontro->getInicio()} - {$encontro->getTermino()}</td>";
                     echo "<td>";
+                    echo "<div style='display:flex'>";
                     echo "<a href='editarEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-sm btn-primary'>
                         <i class='bi bi-pencil'></i>
                     </a>";
                     echo "<a href='#' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#deleteModal-{$encontro->getIdEncontro()}'>
                         <i class='bi bi-trash'></i>
                     </a>";
+                    echo "</div>";
                     echo "</td>";
                     echo "</tr>";
 
-                    // Delete Modal
                     echo "<div class='modal fade' id='deleteModal-{$encontro->getIdEncontro()}' tabindex='-1' role='dialog' aria-labelledby='deleteModalLabel-{$encontro->getIdEncontro()}' aria-hidden='true'>";
                     echo "<div class='modal-dialog' role='document'>";
                     echo "<div class='modal-content'>";

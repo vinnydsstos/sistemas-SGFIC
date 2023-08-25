@@ -47,7 +47,7 @@ $cursos = Curso::buscarTodos();
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <form method="POST" action="adicionarTurma.php">
             <div class="form-group">
-                <label for="nome">Nome da Turma:</label>
+                <label for="nome">Código da Turma:</label>
                 <input type="text" class="form-control" id="nome" name="nome" required>
             </div>
             <div class="form-group">

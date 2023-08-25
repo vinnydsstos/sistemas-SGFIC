@@ -9,19 +9,28 @@ class Turma
     private $nome;
     private $idDocenteResponsavel;
     private $idCurso;
+    private $nomeCurso;
     private $numeroDeVagas;
     private $dataDeInicio;
     private $dataDeFinalizacao;
     private $status;
 
-  
+
     public function salvar()
     {
         $conexao = Connect::getConnection();
         $stmt = $conexao->prepare("INSERT INTO Turma(nome, idDocenteResponsavel, idCurso, numeroDeVagas, dataDeInicio, dataDeFinalizacao, status) 
                                    VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siiisss", $this->nome, $this->idDocenteResponsavel, $this->idCurso, $this->numeroDeVagas, 
-                          $this->dataDeInicio, $this->dataDeFinalizacao, $this->status);
+        $stmt->bind_param(
+            "siiisss",
+            $this->nome,
+            $this->idDocenteResponsavel,
+            $this->idCurso,
+            $this->numeroDeVagas,
+            $this->dataDeInicio,
+            $this->dataDeFinalizacao,
+            $this->status
+        );
         $stmt->execute();
         $stmt->close();
     }
@@ -31,9 +40,18 @@ class Turma
         $conexao = Connect::getConnection();
         $stmt = $conexao->prepare("UPDATE Turma SET nome = ?, idDocenteResponsavel = ?, idCurso = ?, numeroDeVagas = ?, 
                                    dataDeInicio = ?, dataDeFinalizacao = ?, status = ? WHERE idTurma = ?");
-        
-        $stmt->bind_param("siiisssi", $this->nome, $this->idDocenteResponsavel, $this->idCurso, $this->numeroDeVagas, 
-                          $this->dataDeInicio, $this->dataDeFinalizacao, $this->status, $this->idTurma);
+
+        $stmt->bind_param(
+            "siiisssi",
+            $this->nome,
+            $this->idDocenteResponsavel,
+            $this->idCurso,
+            $this->numeroDeVagas,
+            $this->dataDeInicio,
+            $this->dataDeFinalizacao,
+            $this->status,
+            $this->idTurma
+        );
         $stmt->execute();
         $stmt->close();
     }
@@ -50,22 +68,39 @@ class Turma
     public static function buscarTodos()
     {
         $conexao = Connect::getConnection();
-        $rs = $conexao->query("SELECT * FROM Turma");
+        $rs = $conexao->query("SELECT 
+        t.idTurma,
+        t.nome AS nomeTurma,
+        t.idDocenteResponsavel,
+        t.idCurso,
+        c.nome AS nomeCurso,
+        t.numeroDeVagas,
+        t.dataDeInicio,
+        t.dataDeFinalizacao,
+        t.status 
+    FROM 
+        Turma t
+    JOIN 
+        Curso c ON t.idCurso = c.idCurso;
+    ");
         $turmas = array();
-        while ($row = mysqli_fetch_row($rs)) {
+        while ($row = mysqli_fetch_assoc($rs)) {
             $turma = new Turma();
-            $turma->idTurma = $row[0];
-            $turma->nome = $row[1];
-            $turma->idDocenteResponsavel = $row[2];
-            $turma->idCurso = $row[3];
-            $turma->numeroDeVagas = $row[4];
-            $turma->dataDeInicio = $row[5];
-            $turma->dataDeFinalizacao = $row[6];
-            $turma->status = $row[7];
-            array_push($turmas, $turma);
+            $turma->idTurma = $row['idTurma'];
+            $turma->nome = $row['nomeTurma'];
+            $turma->idDocenteResponsavel = $row['idDocenteResponsavel'];
+            $turma->idCurso = $row['idCurso'];
+            $turma->nomeCurso = $row['nomeCurso'];
+            $turma->numeroDeVagas = $row['numeroDeVagas'];
+            $turma->dataDeInicio = $row['dataDeInicio'];
+            $turma->dataDeFinalizacao = $row['dataDeFinalizacao'];
+            $turma->status = $row['status'];
+            array_push($turmas,$turma);
         }
+
         return $turmas;
     }
+
 
     public static function buscarPorId($idTurma)
     {
@@ -89,7 +124,7 @@ class Turma
     public static function buscarPorNome($nomeTurma)
     {
         $conexao = Connect::getConnection();
-        $rs = $conexao->query("SELECT * FROM Turma WHERE nome = '" . $nomeTurma . "'" );
+        $rs = $conexao->query("SELECT * FROM Turma WHERE nome = '" . $nomeTurma . "'");
         $row = mysqli_fetch_row($rs);
         if ($row) {
             $turma = new Turma();
@@ -105,69 +140,88 @@ class Turma
         }
     }
 
-    public function setIdTurma($idTurma) {
+    public function setIdTurma($idTurma)
+    {
         $this->idTurma = $idTurma;
     }
 
-    public function getIdTurma() {
+    public function getIdTurma()
+    {
         return $this->idTurma;
     }
 
-    public function setNome($nome) {
+    public function setNome($nome)
+    {
         $this->nome = $nome;
     }
 
-    public function getNome() {
+    public function getNome()
+    {
         return $this->nome;
     }
 
-    public function setIdDocenteResponsavel($idDocenteResponsavel) {
+    public function setIdDocenteResponsavel($idDocenteResponsavel)
+    {
         $this->idDocenteResponsavel = $idDocenteResponsavel;
     }
 
-    public function getIdDocenteResponsavel() {
+    public function getIdDocenteResponsavel()
+    {
         return $this->idDocenteResponsavel;
     }
 
-    public function setIdCurso($idCurso) {
+    public function setIdCurso($idCurso)
+    {
         $this->idCurso = $idCurso;
     }
 
-    public function getIdCurso() {
+    public function getIdCurso()
+    {
         return $this->idCurso;
     }
 
-    public function setNumeroDeVagas($numeroDeVagas) {
+    public function getNomeCurso()
+    {
+        return $this->nomeCurso;
+    }
+
+    public function setNumeroDeVagas($numeroDeVagas)
+    {
         $this->numeroDeVagas = $numeroDeVagas;
     }
 
-    public function getNumeroDeVagas() {
+    public function getNumeroDeVagas()
+    {
         return $this->numeroDeVagas;
     }
 
-    public function setDataDeInicio($dataDeInicio) {
+    public function setDataDeInicio($dataDeInicio)
+    {
         $this->dataDeInicio = $dataDeInicio;
     }
 
-    public function getDataDeInicio() {
+    public function getDataDeInicio()
+    {
         return $this->dataDeInicio;
     }
 
-    public function setDataDeFinalizacao($dataDeFinalizacao) {
+    public function setDataDeFinalizacao($dataDeFinalizacao)
+    {
         $this->dataDeFinalizacao = $dataDeFinalizacao;
     }
 
-    public function getDataDeFinalizacao() {
+    public function getDataDeFinalizacao()
+    {
         return $this->dataDeFinalizacao;
     }
 
-    public function setStatus($status) {
+    public function setStatus($status)
+    {
         $this->status = $status;
     }
 
-    public function getStatus() {
+    public function getStatus()
+    {
         return $this->status;
     }
-
 }
-?>

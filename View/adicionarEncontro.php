@@ -5,6 +5,8 @@ include_once '../Model/Ambiente.php';
 include_once '../Model/encontro.php';
 include_once 'verificador.php';
 
+$turmas = Turma::buscarTodos();
+$ambientes = Ambiente::buscarTodos();
 
 function formatarTurma($turmas)
 {
@@ -24,70 +26,73 @@ function formatarTurma($turmas)
     return $formattedTurmas;
 }
 
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-
-    $turmas = Turma::buscarTodos();
-    $ambientes = Ambiente::buscarTodos();
-}
-
 $possuiConflitos = false;
+$agendamentoRealizado = false;
+$erro = false;
+$mensagem = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Dados recebidos no POST
-    $daysOfWeek = $_POST['days']; // Array with selected days of the week
-    $selectedDates = $_POST['selectedDates']; // Array with selected dates
-    $turma = Turma::buscarPorNome($_POST['turma']);
-    $turmaId = $turma->getIdTurma();
-    $inicio = $_POST['inicio'];
-    $termino = $_POST['termino'];
-    $ambienteId = $_POST['ambiente'];
 
-
-    // Buscar todas as turmas do banco de dados
-    $turmas = Turma::buscarTodos();
-
-
-    // Buscar todos os ambientes do banco de dados
-    $ambientes = Ambiente::buscarTodos();
-    // Buscar a turma selecionada
-    $turmaSelecionada = Turma::buscarPorNome($turmaId);
-
-    $encontros = array();
-
-    // Salvar os encontros no banco de dados
-    foreach ($selectedDates as $dateStr) {
-        $encontro = new Encontro();
-
-        $dateFormatted = date('Y-m-d', strtotime(str_replace('/', '-', $dateStr)));
-        $encontro->setDataDoEncontro($dateFormatted);
-        $encontro->setInicio($_POST['inicio']);
-        $encontro->setTermino($_POST['termino']);
-        $encontro->setIdTurma($turmaId);
-        $encontro->setIdAmbiente($_POST['ambiente']);
-
-        array_push($encontros, $encontro);
-    }
-
-
-
-    $conflitos = Encontro::verificarConflitos($encontros, $turmaSelecionada);
-
-    // Exibir o modal com os resultados
-    if (count($conflitos) > 0) {
-        $possuiConflitos = true;
+    if (isset($_POST['selectedDates']) || empty($_POST['selectedDates'])) {
+        $erro = true;
+        $mensagem = "Você precisa selecionar as datas!";
     } else {
-        $semConflitos = false;
+        // Dados recebidos no POST
+        $daysOfWeek = $_POST['days']; // Array with selected days of the week
+        $selectedDates = $_POST['selectedDates']; // Array with selected dates
+        $turma = Turma::buscarPorNome($_POST['turma']);
+        $turmaId = $turma->getIdTurma();
+        $inicio = $_POST['inicio'];
+        $termino = $_POST['termino'];
+        $ambienteId = $_POST['ambiente'];
 
+
+        // Buscar todas as turmas do banco de dados
+        $turmas = Turma::buscarTodos();
+
+
+        // Buscar todos os ambientes do banco de dados
+        $ambientes = Ambiente::buscarTodos();
+        // Buscar a turma selecionada
+        $turmaSelecionada = Turma::buscarPorNome($turmaId);
+
+        $encontros = array();
 
         // Salvar os encontros no banco de dados
-        foreach ($encontros as $encontro) {
-            // Verificar se o encontro deve ser agendado naquele dia da semana
-            $dayOfWeek = date('l', strtotime($encontro->getDataDoEncontro()));
-            if (in_array($dayOfWeek, $daysOfWeek)) {
-                $encontro->salvar();
+        foreach ($selectedDates as $dateStr) {
+            $encontro = new Encontro();
+
+            $dateFormatted = date('Y-m-d', strtotime(str_replace('/', '-', $dateStr)));
+            $encontro->setDataDoEncontro($dateFormatted);
+            $encontro->setInicio($_POST['inicio']);
+            $encontro->setTermino($_POST['termino']);
+            $encontro->setIdTurma($turmaId);
+            $encontro->setIdAmbiente($_POST['ambiente']);
+
+            array_push($encontros, $encontro);
+        }
+
+
+
+        $conflitos = Encontro::verificarConflitos($encontros, $turmaSelecionada);
+
+        // Exibir o modal com os resultados
+        if (count($conflitos) > 0) {
+            $possuiConflitos = true;
+        } else {
+            $semConflitos = false;
+
+
+            // Salvar os encontros no banco de dados
+            foreach ($encontros as $encontro) {
+                // Verificar se o encontro deve ser agendado naquele dia da semana
+                $dayOfWeek = date('l', strtotime($encontro->getDataDoEncontro()));
+                if (in_array($dayOfWeek, $daysOfWeek)) {
+                    $encontro->salvar();
+                }
             }
         }
+        $agendamentoRealizado = true;
     }
 }
 
@@ -116,17 +121,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
 
 
-                    <?php if (($_SERVER['REQUEST_METHOD'] === 'POST')  && $possuiConflitos == false) { ?>
-
+                    <?php if (($_SERVER['REQUEST_METHOD'] === 'POST')  && $possuiConflitos == false && $agendamentoRealizado) { ?>
                         <div class="alert alert-success">
                             Agendamento feito com sucesso!
                         </div>
-
-
                     <?php } ?>
 
-                    <?php if ($possuiConflitos) { ?>
+                    <?php if ($erro) { ?>
+                        <div class="alert alert-warning">
+                            <?= $mensagem ?>
+                        </div>
+                    <?php } ?>
 
+
+                    <?php if ($possuiConflitos) { ?>
                         <div class="alert alert-danger">
                             <div class="alert alert-danger">
                                 <h4 class="alert-heading">Conflitos Encontrados</h4>
@@ -159,51 +167,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <?php } ?>
 
-
-                    <label for="turma">Turma:</label>
-                    <input type="text" class="form-control" id="turma" name="turma" list="turmaList" required>
-                    <datalist id="turmaList">
-                        <?php foreach ($turmas as $turma) { ?>
-                            <option value="<?php echo $turma->getNome(); ?>">
+                    <div class="form-group">
+                        <label for="turma">Turma:</label><br>
+                        <input type="text" class=" col-sm-6 custom-select custom-select-sm" id="turma" name="turma" list="listaDeTurmas" required>
+                        <datalist id="listaDeTurmas">
+                            <?php foreach ($turmas as $turma) { ?>
+                                <option value="<?= $turma->getNome() ?>">
+                                    <?= $turma->getNomeCurso() ?>
+                                </option>
                             <?php } ?>
-                    </datalist>
+                        </datalist>
+                    </div>
+                </div>
 
-                    <div class="container mt-5 mb-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Selecione a frequência que deseja agendar os encontros</h5>
-                                <div class="d-flex justify-content-center">
-                                    <div class="btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Sunday"> Domingo
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Monday"> Segunda
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Tuesday"> Terça
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Wednesday"> Quarta
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Thursday"> Quinta
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Friday"> Sexta
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Saturday"> Sabado
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="form-group">
+                    <label for="frequencia">Frequência dos encontros:</label>
+                    <div id="frequencia" class="d-flex">
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Sunday"> Domingo
+                            </label>
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Monday"> Segunda
+                            </label>
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Tuesday"> Terça
+                            </label>
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Wednesday"> Quarta
+                            </label>
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Thursday"> Quinta
+                            </label>
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Friday"> Sexta
+                            </label>
+                            <label class="btn btn-outline-success">
+                                <input type="checkbox" name="days[]" value="Saturday"> Sabado
+                            </label>
                         </div>
                     </div>
 
                 </div>
-
-
 
                 <div id="dadosDaTurmaSelecionada"></div>
 
@@ -254,10 +259,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
 
             function formatarData(dataStr) {
-                const data = new Date(dataStr);
-                const dia = data.getDate().toString().padStart(2, '0');
-                const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-                const ano = data.getFullYear();
+                const partes = dataStr.split('-'); // Supondo que o formato original seja "ano-mês-dia"
+
+                const ano = partes[0];
+                const mes = partes[1];
+                const dia = partes[2];
+
                 return `${dia}/${mes}/${ano}`;
             }
 
