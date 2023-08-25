@@ -226,4 +226,6 @@ foreach ($encontros as $encontro) {
    
 </body>
 
+<?php require_once '../sharedComponents/footer.php' ?>;
+
 </html>

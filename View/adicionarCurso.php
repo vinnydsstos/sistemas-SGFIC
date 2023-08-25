@@ -76,4 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 
+<?php require_once '../sharedComponents/footer.php' ?>;
+
 </html>

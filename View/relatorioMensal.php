@@ -145,4 +145,6 @@ $encontros = $encontro->buscarEncontrosPorMes($mesAtual);
     </div>
 </body>
 
+<?php require_once '../sharedComponents/footer.php' ?>;
+
 </html>

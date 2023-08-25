@@ -5,7 +5,8 @@ require '../config.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-function exportToExcel($pdo) {
+function exportToExcel($pdo)
+{
     // Get a list of tables from the database
     $tablesQuery = $pdo->query("SHOW TABLES");
     $tables = $tablesQuery->fetchAll(PDO::FETCH_COLUMN);
@@ -68,11 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include_once '../sharedComponents/header.php'; ?>
 
 <body class="container pl-0 pr-0">
-    <div class="container pt-5 pl-5 pr-5 pb-5">
+    <div class="container py-5 px-4 bg-light rounded shadow-lg text-center">
         <form method="POST">
-            <button type="submit" name="export" class="btn btn-primary">Baixar Base de Dados</button>
+            <img src="images/downloadDatabase.png" alt="Download Database" class="mb-4" style="max-width: 100px;"> <br>
+            <button type="submit" name="export" class="btn btn-primary btn-lg">Baixar Base de Dados</button>
         </form>
     </div>
+
 
     <!-- Inclua os arquivos do DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
@@ -91,5 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     </script>
 </body>
+
+<?php require_once '../sharedComponents/footer.php' ?>;
 
 </html>

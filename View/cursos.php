@@ -38,7 +38,7 @@ include_once '../sharedComponents/header.php';
                     echo "<td>{$curso->getRequisitos()}</td>";
                     echo "<td>{$curso->getDescricao()}</td>";
                     echo "<td style='display:flex'>";
-                    echo "<a href='editarCurso.php?id={$curso->getIdCurso()}' class='btn btn-sm btn-primary'>
+                    echo "<a href='../Functions/editarCurso.php?id={$curso->getIdCurso()}' class='btn btn-sm btn-primary'>
                         <i class='bi bi-pencil'></i>
                     </a>";
 
@@ -83,12 +83,14 @@ include_once '../sharedComponents/header.php';
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <a href="excluirCurso.php?id=<?= $curso->getIdCurso() ?>" class="btn btn-danger">Excluir</a>
+                        <a href="../Functions/excluirCurso.php?id=<?= $curso->getIdCurso() ?>" class="btn btn-danger">Excluir</a>
                     </div>
                 </div>
             </div>
         </div>
     <?php } ?>
 </body>
+
+<?php require_once '../sharedComponents/footer.php' ?>;
 
 </html>

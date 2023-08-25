@@ -119,5 +119,5 @@ if (isset($_GET['nif'])) {
         </form>
     </div>
 </body>
-
+<?php require_once '../sharedComponents/footer.php' ?>;
 </html>

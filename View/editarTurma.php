@@ -109,5 +109,5 @@ if (isset($_GET['id'])) {
         </form>
     </div>
 </body>
-
+<?php require_once '../sharedComponents/footer.php' ?>;
 </html>

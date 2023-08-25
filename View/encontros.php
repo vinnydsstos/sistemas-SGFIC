@@ -68,7 +68,7 @@ $docentes = Docente::buscarTodos();
                     echo "<td>{$encontro->getInicio()} - {$encontro->getTermino()}</td>";
                     echo "<td>";
                     echo "<div style='display:flex'>";
-                    echo "<a href='editarEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-sm btn-primary'>
+                    echo "<a href='../Functions/editarEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-sm btn-primary'>
                         <i class='bi bi-pencil'></i>
                     </a>";
                     echo "<a href='#' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#deleteModal-{$encontro->getIdEncontro()}'>
@@ -92,7 +92,7 @@ $docentes = Docente::buscarTodos();
                     echo "</div>";
                     echo "<div class='modal-footer'>";
                     echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancelar</button>";
-                    echo "<a href='excluirEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-danger'>Excluir</a>";
+                    echo "<a href='../Functions/excluirEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-danger'>Excluir</a>";
                     echo "</div>";
                     echo "</div>";
                     echo "</div>";
@@ -120,5 +120,5 @@ $docentes = Docente::buscarTodos();
         });
     </script>
 </body>
-
+<?php require_once '../sharedComponents/footer.php' ?>;
 </html>

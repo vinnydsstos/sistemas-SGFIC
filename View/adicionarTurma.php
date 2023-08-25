@@ -97,4 +97,6 @@ $cursos = Curso::buscarTodos();
 
 </body>
 
+<?php require_once '../sharedComponents/footer.php' ?>;
+
 </html>

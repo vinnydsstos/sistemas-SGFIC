@@ -7,7 +7,7 @@
 <?php $nome_pagina = "Turmas"; ?>
 <?php include_once '../sharedComponents/header.php'; ?>
 
-<body class="container pl-0 pr-0">
+<body class="container pl-0 pr-0 bg-white">
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <table class="table table-striped" id="turmasTable">
             <thead>
@@ -55,7 +55,7 @@
                     echo "<td>{$turma->getStatus()}</td>";
                     echo "<td>";
                     echo "<div class='d-flex'>";
-                    echo "<a href='editarTurma.php?id={$turma->getIdTurma()}' class='btn btn-sm btn-primary'>
+                    echo "<a href='../Functions/editarTurma.php?id={$turma->getIdTurma()}' class='btn btn-sm btn-primary'>
                             <i class='bi bi-pencil'></i>
                         </a>";
                     // Botão de exclusão com modal de confirmação
@@ -81,7 +81,7 @@
                     echo "</div>";
                     echo "<div class='modal-footer'>";
                     echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancelar</button>";
-                    echo "<a href='excluirTurma.php?id={$turma->getIdTurma()}' class='btn btn-danger'>Excluir</a>";
+                    echo "<a href='../Functions/excluirTurma.php?id={$turma->getIdTurma()}' class='btn btn-danger'>Excluir</a>";
                     echo "</div>";
                     echo "</div>";
                     echo "</div>";
@@ -106,5 +106,7 @@
         });
     </script>
 </body>
+
+<?php require_once '../sharedComponents/footer.php' ?>;
 
 </html>

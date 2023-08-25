@@ -29,13 +29,10 @@ function formatarTurma($turmas)
 $possuiConflitos = false;
 $agendamentoRealizado = false;
 $erro = false;
-$mensagem = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (isset($_POST['selectedDates']) || empty($_POST['selectedDates'])) {
+    if (isset($_POST['selectedDates']) && count($_POST['selectedDates']) == 0) {
         $erro = true;
-        $mensagem = "Você precisa selecionar as datas!";
     } else {
         // Dados recebidos no POST
         $daysOfWeek = $_POST['days']; // Array with selected days of the week
@@ -129,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <?php if ($erro) { ?>
                         <div class="alert alert-warning">
-                            <?= $mensagem ?>
+                            Você precisa selecionar as datas!
                         </div>
                     <?php } ?>
 
@@ -385,5 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </script>
 
 </body>
+
+<?php require_once '../sharedComponents/footer.php' ?>;
 
 </html>

@@ -89,7 +89,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" title="SGFIC-dashboard" src="https://app.powerbi.com/view?r=eyJrIjoiMGM5ZjZhNDQtNGNmOS00YWQ1LWIzYjQtMzI0YzI2M2ExNjYzIiwidCI6IjQxNDhhNmRlLTBkZDEtNGQwNC1hNGM1LTc4ZTM3NGU0ZjZkNiIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+                    <iframe class="embed-responsive-item" title="SGFIC-dashboard" src="https://app.powerbi.com/view?r=eyJrIjoiM2RjZGRiN2MtOTRhMy00N2MzLWIzMDctY2Q1ZmIzYjQ2Mzk0IiwidCI6IjQxNDhhNmRlLTBkZDEtNGQwNC1hNGM1LTc4ZTM3NGU0ZjZkNiIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
                 </div>
             </div>
         </div>

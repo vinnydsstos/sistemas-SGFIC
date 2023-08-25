@@ -54,7 +54,7 @@
                         <td><?php echo $docente->getCargaHoraria(); ?></td>
 
                         <td style="display:flex; ">
-                            <a href='editarDocente.php?nif=<?php echo $docente->getNif(); ?>' class='btn btn-sm btn-primary'>
+                            <a href='../Functions/editarDocente.php?nif=<?php echo $docente->getNif(); ?>' class='btn btn-sm btn-primary'>
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <button type="button" class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#confirmModal-<?php echo $docente->getNif(); ?>">
@@ -76,7 +76,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                            <a href="excluirDocente.php?id=<?php echo $docente->getNif(); ?>" class="btn btn-danger">Excluir</a>
+                                            <a href="../Functions/excluirDocente.php?id=<?php echo $docente->getNif(); ?>" class="btn btn-danger">Excluir</a>
                                         </div>
                                     </div>
                                 </div>
@@ -97,5 +97,6 @@
     </script>
 
 </body>
+<?php require_once '../sharedComponents/footer.php' ?>;
 
 </html>
