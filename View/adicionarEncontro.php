@@ -6,7 +6,8 @@ include_once '../Model/encontro.php';
 include_once 'verificador.php';
 
 
-function formatarTurma($turmas){
+function formatarTurma($turmas)
+{
     $formattedTurmas = array();
     foreach ($turmas as $turma) {
         $formattedTurmas[] = array(
@@ -36,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Dados recebidos no POST
     $daysOfWeek = $_POST['days']; // Array with selected days of the week
     $selectedDates = $_POST['selectedDates']; // Array with selected dates
-    $turmaId = $_POST['turma'];
+    $turma = Turma::buscarPorNome($_POST['turma']);
+    $turmaId = $turma->getIdTurma();
     $inicio = $_POST['inicio'];
     $termino = $_POST['termino'];
     $ambienteId = $_POST['ambiente'];
@@ -49,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Buscar todos os ambientes do banco de dados
     $ambientes = Ambiente::buscarTodos();
     // Buscar a turma selecionada
-    $turmaSelecionada = Turma::buscarPorId($turmaId);
+    $turmaSelecionada = Turma::buscarPorNome($turmaId);
 
     $encontros = array();
 
@@ -61,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $encontro->setDataDoEncontro($dateFormatted);
         $encontro->setInicio($_POST['inicio']);
         $encontro->setTermino($_POST['termino']);
-        $encontro->setIdTurma($_POST['turma']);
+        $encontro->setIdTurma($turmaId);
         $encontro->setIdAmbiente($_POST['ambiente']);
 
         array_push($encontros, $encontro);
@@ -190,14 +192,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php } ?>
 
 
-
                     <label for="turma">Turma:</label>
-                    <select class="form-control" id="turma" name="turma" required>
-                        <option value="">Selecione a turma</option>
+                    <input type="text" class="form-control" id="turma" name="turma" list="turmaList" required>
+                    <datalist id="turmaList">
                         <?php foreach ($turmas as $turma) { ?>
-                            <option value="<?php echo $turma->getIdTurma(); ?>"><?php echo $turma->getNome(); ?></option>
-                        <?php } ?>
-                    </select>
+                            <option value="<?php echo $turma->getNome(); ?>">
+                            <?php } ?>
+                    </datalist>
                 </div>
 
 
@@ -239,6 +240,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         <script>
+            $(document).ready(function() {
+                $("#turma").on("input", function() {
+                    exibirDadosTurmaSelecionada();
+                });
+                $("#turma").on("blur", function() {
+                    exibirDadosTurmaSelecionada();
+                });
+            });
+
             function formatarData(dataStr) {
                 const data = new Date(dataStr);
                 const dia = data.getDate().toString().padStart(2, '0');
@@ -250,8 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             function exibirDadosTurmaSelecionada() {
                 const turmaSelecionadaId = $("#turma").val();
 
-                const turmaSelecionada = <?php echo json_encode(formatarTurma($turmas)); ?>.find(turma => turma.idTurma === turmaSelecionadaId);
-
+                const turmaSelecionada = <?php echo json_encode(formatarTurma($turmas)); ?>.find(turma => turma.nome == turmaSelecionadaId);
                 if (turmaSelecionada) {
                     const dataInicioFormatada = formatarData(turmaSelecionada.dataDeInicio);
                     const dataFinalizacaoFormatada = formatarData(turmaSelecionada.dataDeFinalizacao);

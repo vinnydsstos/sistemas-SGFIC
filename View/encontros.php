@@ -50,7 +50,8 @@ $docentes = Docente::buscarTodos();
             </thead>
             <tbody>
                 <?php
-                // Loop to display each encontro in the table
+                //print_r($encontros);
+
                 foreach ($encontros as $encontro) {
                     // Fetch the name of the turma based on the encontro's turma ID
                     $turma = Turma::buscarPorId($encontro->getIdTurma());

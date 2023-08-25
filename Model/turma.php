@@ -86,6 +86,25 @@ class Turma
         }
     }
 
+    public static function buscarPorNome($nomeTurma)
+    {
+        $conexao = Connect::getConnection();
+        $rs = $conexao->query("SELECT * FROM Turma WHERE nome = '" . $nomeTurma . "'" );
+        $row = mysqli_fetch_row($rs);
+        if ($row) {
+            $turma = new Turma();
+            $turma->idTurma = $row[0];
+            $turma->nome = $row[1];
+            $turma->idDocenteResponsavel = $row[2];
+            $turma->idCurso = $row[3];
+            $turma->numeroDeVagas = $row[4];
+            $turma->dataDeInicio = $row[5];
+            $turma->dataDeFinalizacao = $row[6];
+            $turma->status = $row[7];
+            return $turma;
+        }
+    }
+
     public function setIdTurma($idTurma) {
         $this->idTurma = $idTurma;
     }
