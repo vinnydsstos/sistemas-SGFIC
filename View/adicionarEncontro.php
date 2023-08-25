@@ -115,38 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" action="adicionarEncontro.php">
                 <div class="form-group">
 
-                    <div class="container mt-5 mb-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Selecione a frequência que deseja agendar os encontros</h5>
-                                <div class="d-flex justify-content-center">
-                                    <div class="btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Sunday"> Domingo
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Monday"> Segunda
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Tuesday"> Terça
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Wednesday"> Quarta
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Thursday"> Quinta
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Friday"> Sexta
-                                        </label>
-                                        <label class="btn btn-primary">
-                                            <input type="checkbox" name="days[]" value="Saturday"> Sabado
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <?php if (($_SERVER['REQUEST_METHOD'] === 'POST')  && $possuiConflitos == false) { ?>
 
@@ -199,6 +167,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="<?php echo $turma->getNome(); ?>">
                             <?php } ?>
                     </datalist>
+
+                    <div class="container mt-5 mb-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Selecione a frequência que deseja agendar os encontros</h5>
+                                <div class="d-flex justify-content-center">
+                                    <div class="btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Sunday"> Domingo
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Monday"> Segunda
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Tuesday"> Terça
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Wednesday"> Quarta
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Thursday"> Quinta
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Friday"> Sexta
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" name="days[]" value="Saturday"> Sabado
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
 
@@ -209,9 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="button" class="btn btn-primary" onclick="selectAllDates()">Select All</button>
                     <button type="button" class="btn btn-secondary" onclick="deselectAllDates()">Deselect All</button>
                 </div>
+                <br>
 
                 <div id="possiveisDatasDeEncontros"></div>
 
+                <br>
 
 
                 <div class="form-group">
@@ -316,15 +320,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             function displayPossibleDates(datesArray) {
                 let tableHtml = '<table class="table table-striped  table-bordered">';
-                tableHtml += '<thead><tr><th>Data</th></tr></thead>';
+                tableHtml += '<thead><tr><th>Data</th><th>Data</th><th>Data</th></tr></thead>';
                 tableHtml += '<tbody>';
 
-                datesArray.forEach((date) => {
-                    const formattedDate = new Intl.DateTimeFormat("pt-BR").format(date);
-                    tableHtml += `
-                <tr>
-                    <td><input type="checkbox" name="selectedDates[]" value="${formattedDate}"> ${formattedDate}</td>
-                </tr>`;
+                const chunkedDates = chunkArray(datesArray, 3);
+
+                chunkedDates.forEach((row) => {
+                    tableHtml += '<tr>';
+
+                    row.forEach((date) => {
+                        const formattedDate = new Intl.DateTimeFormat("pt-BR").format(date);
+                        tableHtml += `
+                <td><input type="checkbox" name="selectedDates[]" value="${formattedDate}"> ${formattedDate}</td>
+            `;
+                    });
+
+                    tableHtml += '</tr>';
                 });
 
                 tableHtml += '</tbody></table>';
@@ -333,6 +344,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $("#botoesDeControle").css("display", "inline");
             }
+
+            function chunkArray(array, size) {
+                const chunkedArray = [];
+
+                for (let i = 0; i < array.length; i += size) {
+                    chunkedArray.push(array.slice(i, i + size));
+                }
+
+                return chunkedArray;
+            }
+
 
             $("#turma").on("change", function() {
                 exibirDadosTurmaSelecionada();

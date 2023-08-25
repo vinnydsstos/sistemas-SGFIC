@@ -176,7 +176,7 @@ foreach ($encontros as $encontro) {
             <?php foreach ($encontrosPorTurma as $turmaId => $encontrosTurma) : ?>
                 <?php $turmaEncontro = $turmasData[$turmaId]; ?>
                 <div class="card mb-5">
-                    <a class="card-header card-color"  href="#collapse<?php echo $turmaId; ?>" data-toggle="collapse" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
+                    <a class="card-header card-color card-relatorio"  href="#collapse<?php echo $turmaId; ?>" data-toggle="collapse" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
                         <h2 class="mb-0">
                             <button class="btn" data-toggle="collapse" data-target="#collapse<?php echo $turmaId; ?>" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
                                 <strong class="nome-turma">Turma - <?php echo $turmaEncontro->getNome(); ?> - </strong> 
@@ -215,7 +215,7 @@ foreach ($encontros as $encontro) {
                     </div>
                     <div class="card-footer footer-color">
                         Total de Encontros: <strong><?php echo $totalEncontrosPorTurma[$turmaId]; ?></strong> |
-                        Total de Horas Agendadas: <strong> <?php echo $totalHorasAgendadasPorTurma[$turmaId]/60 ; ?> hs </strong>
+                        Total de Horas Agendadas: <strong> <?php echo number_format($totalHorasAgendadasPorTurma[$turmaId] / 60, 2); ?> hs </strong>
                     </div>
                 </div>
             <?php endforeach; ?>

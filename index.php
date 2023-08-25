@@ -60,13 +60,22 @@
             </li>
             <li class="nav-item dropdown <?php if ($_SERVER['PHP_SELF'] === $path . 'View/relatorioMensal.php' || $_SERVER['PHP_SELF'] === $path . 'View/adicionarCurso.php') echo 'active'; ?>">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Relatório                
+                    Relatório
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
                     <a class="dropdown-item" href="<?php echo $path; ?>View/relatorioDocente.php">Relatório Docente</a>
                 </div>
             </li>
-            
+
+            <li class="nav-item dropdown <?php if ($_SERVER['PHP_SELF'] === $path . 'View/relatorioMensal.php' || $_SERVER['PHP_SELF'] === $path . 'View/adicionarCurso.php') echo 'active'; ?>">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Admin
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/exportarBaseDeDados.php">Exportar base de dados</a>
+                </div>
+            </li>
+
         </ul>
     </div>
 </nav>
