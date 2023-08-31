@@ -15,11 +15,11 @@ if (isset($_GET['id'])) {
     $docente->deletar();
 
     // Redireciona para a página de lista de docentes
-    header('Location: docentes.php');
+    header('Location: ../View/docentes.php');
     exit();
 } else {
     // Caso não tenha sido fornecido o parâmetro 'id', redireciona para a página de lista de docentes
-    header('Location: docentes.php');
+    header('Location: ../View/docentes.php');
     exit();
 }
 ?>

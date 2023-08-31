@@ -7,54 +7,52 @@ include_once('../Model/docente.php'); // Inclua a classe Docente
 $encontro = new Encontro();
 $docente = new Docente();
 
+$meses = [
+    1 => 'Janeiro',
+    2 => 'Fevereiro',
+    3 => 'Março',
+    4 => 'Abril',
+    5 => 'Maio',
+    6 => 'Junho',
+    7 => 'Julho',
+    8 => 'Agosto',
+    9 => 'Setembro',
+    10 => 'Outubro',
+    11 => 'Novembro',
+    12 => 'Dezembro'
+];
+
+$anos = [
+    1 => 2023,
+    2 => 2024,
+];
+
+$anoCorrente = 2023;
+
 $turmas = Turma::buscarTodos();
 $ambientes = Ambiente::buscarTodos();
 
-// Obtém o número do mês inicial (ou o mês selecionado)
-if (isset($_GET['mes_inicial'])) {
-    $mesInicial = intval($_GET['mes_inicial']);
-} else {
-    $mesInicial = intval(date('m'));
-}
-
-// Obtém o número do mês final (ou o mês selecionado)
-if (isset($_GET['mes_final'])) {
-    $mesFinal = intval($_GET['mes_final']);
-} else {
-    $mesFinal = intval(date('m'));
-}
-
-// Obtém o número do ano atual
+$anoCorrente = isset($_GET['ano']) ? intval($_GET['ano']) : date('Y');
+$mesInicial = isset($_GET['mes_inicial']) ? intval($_GET['mes_inicial']) : date('m');
+$mesFinal = isset($_GET['mes_final']) ? intval($_GET['mes_final']) : date('m');
 $anoAtual = intval(date('Y'));
 
-// Busca todos os docentes
 $docentes = $docente->buscarTodos();
+$docenteSelecionado = (isset($_GET['docente']) && $_GET['docente'] !== 'all') ? $_GET['docente'] : 'all';
 
-// Obtém o NIF do docente selecionado (ou nenhum se não houver seleção)
-if (isset($_GET['docente']) && $_GET['docente'] !== 'all') {
-    $docenteSelecionado = $_GET['docente'];
-} else {
-    $docenteSelecionado = 'all';
-}
+$encontros = $encontro->buscarEncontrosPorAnoMesEProfessor($anoCorrente, $mesInicial, $mesFinal, $docenteSelecionado);
 
-// Busca os encontros para o período entre mes_inicial e mes_final e o docente selecionado (ou todos os docentes)
-$encontros = $encontro->buscarEncontrosPorPeriodoEProfessor($mesInicial, $mesFinal, $docenteSelecionado);
-
-// Create associative arrays to store the Turma and Ambiente data
 $turmasData = [];
 $ambientesData = [];
 
-// Fetch Turma data and store it in the associative array
 foreach ($turmas as $turma) {
     $turmasData[$turma->getIdTurma()] = $turma;
 }
 
-// Fetch Ambiente data and store it in the associative array
 foreach ($ambientes as $ambiente) {
     $ambientesData[$ambiente->getIdSala()] = $ambiente;
 }
 
-// Obtém os encontros agrupados por turma
 $encontrosPorTurma = [];
 foreach ($encontros as $encontro) {
     $turmaId = $encontro->getIdTurma();
@@ -64,11 +62,9 @@ foreach ($encontros as $encontro) {
     $encontrosPorTurma[$turmaId][] = $encontro;
 }
 
-// Variáveis para armazenar as somatórias
 $totalEncontrosPorTurma = [];
 $totalHorasAgendadasPorTurma = [];
 
-// Obtém os encontros agrupados por turma e realiza as somatórias
 $encontrosPorTurma = [];
 foreach ($encontros as $encontro) {
     $turmaId = $encontro->getIdTurma();
@@ -101,19 +97,16 @@ foreach ($encontros as $encontro) {
 <body class="container">
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <div class="mb-5">
-            <h1>Encontros planejados</h1>
+            <h1>Relatório do Docente</h1>
         </div>
 
-        <!-- Formulário para seleção do mês e docente -->
-        <form class="mb-5" method="GET" action="relatorioDocente.php">
+        <form class="mb-5 card p-5" style="background-color:beige" method="GET" action="relatorioDocente.php">
             <div class="form-row">
-
-                <!-- Campo para selecionar o docente -->
                 <div class="form-group col-md-3 mb-0">
+                    <label for="docente">Docente:</label>
                     <select class="form-control" id="docente" name="docente">
                         <option value="all">Todos os Docentes</option>
                         <?php
-                        // Exibir as opções do dropdown para selecionar o docente
                         foreach ($docentes as $doc) {
                             echo "<option value='{$doc->getNif()}'" . ($docenteSelecionado === $doc->getNif() ? ' selected' : '') . ">{$doc->getNomeCompleto()}</option>";
                         }
@@ -121,28 +114,11 @@ foreach ($encontros as $encontro) {
                     </select>
                 </div>
 
-                <!-- Campo para selecionar o mês inicial -->
                 <div class="form-group col-md-3 mb-0">
+                    <label for="mes_inicial">Mês inicial:</label>
                     <select class="form-control" id="mes_inicial" name="mes_inicial">
                         <option>Selecione o mês inicial</option>
                         <?php
-                        // Obter os nomes dos meses em Português
-                        $meses = [
-                            1 => 'Janeiro',
-                            2 => 'Fevereiro',
-                            3 => 'Março',
-                            4 => 'Abril',
-                            5 => 'Maio',
-                            6 => 'Junho',
-                            7 => 'Julho',
-                            8 => 'Agosto',
-                            9 => 'Setembro',
-                            10 => 'Outubro',
-                            11 => 'Novembro',
-                            12 => 'Dezembro'
-                        ];
-
-                        // Exibir as opções do dropdown para selecionar o mês inicial
                         foreach ($meses as $mesNumero => $mesNome) {
                             echo "<option value='$mesNumero'" . ($mesInicial === $mesNumero ? ' selected' : '') . ">$mesNome</option>";
                         }
@@ -150,12 +126,11 @@ foreach ($encontros as $encontro) {
                     </select>
                 </div>
 
-                <!-- Campo para selecionar o mês final -->
                 <div class="form-group col-md-3 mb-0">
+                    <label for="mes_final">Mês final:</label>
                     <select class="form-control" id="mes_final" name="mes_final">
                         <option>Selecione o mês final</option>
                         <?php
-                        // Exibir as opções do dropdown para selecionar o mês final
                         foreach ($meses as $mesNumero => $mesNome) {
                             echo "<option value='$mesNumero'" . ($mesFinal === $mesNumero ? ' selected' : '') . ">$mesNome</option>";
                         }
@@ -163,23 +138,35 @@ foreach ($encontros as $encontro) {
                     </select>
                 </div>
 
+                <div class="form-group col-md-3 mb-0">
+                    <label for="mes_ano">Ano:</label>
+                    <select class="form-control" id="ano" name="ano">
+                        <option>Selecione o ano</option>
+                        <?php
+                        foreach ($anos as $ano) {
+                            echo "<option value='$ano'>$ano</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
 
-                <div class="form-group col-md-3">
-                    <label></label>
-                    <button type="submit" class="btn btn-primary ">Gerar Relatório</button>
+            </div>
+            <br>
+            <div class="form-row">
+                <div class="col-md-12 text-center">
+                    <button type="submit" class="btn btn-primary btn-block">Gerar Relatório</button>
                 </div>
             </div>
         </form>
 
-        <!-- Início do acordeão -->
         <div id="accordion">
             <?php foreach ($encontrosPorTurma as $turmaId => $encontrosTurma) : ?>
                 <?php $turmaEncontro = $turmasData[$turmaId]; ?>
                 <div class="card mb-5">
-                    <a class="card-header card-color card-relatorio"  href="#collapse<?php echo $turmaId; ?>" data-toggle="collapse" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
+                    <a class="card-header card-color card-relatorio" href="#collapse<?php echo $turmaId; ?>" data-toggle="collapse" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
                         <h2 class="mb-0">
                             <button class="btn" data-toggle="collapse" data-target="#collapse<?php echo $turmaId; ?>" aria-expanded="true" aria-controls="collapse<?php echo $turmaId; ?>">
-                                <strong class="nome-turma">Turma - <?php echo $turmaEncontro->getNome(); ?> - </strong> 
+                                <strong class="nome-turma">Turma - <?php echo $turmaEncontro->getNome(); ?> - </strong>
                                 <span class="badge badge-primary">Vagas: <?php echo $turmaEncontro->getNumeroDeVagas(); ?></span>
                                 <span class="badge badge-warning">Data de Início: <?php echo $turmaEncontro->getDataDeInicio(); ?></span>
                                 <span class="badge badge-warning">Data de Término: <?php echo $turmaEncontro->getDataDeFinalizacao(); ?></span>
@@ -188,10 +175,8 @@ foreach ($encontros as $encontro) {
                         </h2>
                     </a>
 
-                    <!-- Use a classe 'show' para manter os itens expandidos -->
                     <div id="collapse<?php echo $turmaId; ?>" class="collapse show" aria-labelledby="heading<?php echo $turmaId; ?>" data-parent="#accordion">
                         <div class="card-body">
-                            <!-- Tabela para mostrar os encontros da turma -->
                             <table class="table table-bordered mt-3">
                                 <thead>
                                     <tr>
@@ -220,10 +205,9 @@ foreach ($encontros as $encontro) {
                 </div>
             <?php endforeach; ?>
         </div>
-        <!-- Fim do acordeão -->
     </div>
 
-   
+
 </body>
 
 <?php require_once '../sharedComponents/footer.php' ?>;

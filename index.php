@@ -3,7 +3,7 @@
 
 <head>
     <title>SGFIC</title>
-    <link rel="icon" type="image/png" href="View/images/Fic.png">
+    <link rel="icon" type="image/png" href="View/images/favicon.png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -27,17 +27,17 @@
                     Turmas
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownTurmas">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/turmas.php">Listar Turmas</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/turmas.php">Gerenciar Turmas</a>
                     <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarTurma.php">Nova Turma</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEncontros" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Encontros
+                    Aulas
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownEncontros">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/encontros.php">Listar Encontros</a>
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarEncontro.php">Agendar encontros</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/encontros.php">Gerenciar Aulas</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarEncontro.php">Agendar Aulas</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -45,7 +45,7 @@
                     Docentes
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownDocentes">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/docentes.php">Listar Docentes</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/docentes.php">Gerenciar Docentes</a>
                     <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarDocente.php">Novo Docente</a>
                 </div>
             </li>
@@ -54,7 +54,7 @@
                     Cursos
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/cursos.php">Listar Cursos</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/cursos.php">Gerenciar Cursos</a>
                     <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarCurso.php">Novo Curso</a>
                 </div>
             </li>
@@ -85,8 +85,8 @@
 <body class="container pl-0 pr-0">
 
 
-    <div class="container-fluid mt-5">
-        <div class="row">
+    <div class="container-fluid">
+        <div class="row" style="margin-left: -76px; margin-right: -76px;">
             <div class="col-md-12">
                 <div class="embed-responsive embed-responsive-16by9">
                     <iframe class="embed-responsive-item" title="SGFIC-dashboard" src="https://app.powerbi.com/view?r=eyJrIjoiM2RjZGRiN2MtOTRhMy00N2MzLWIzMDctY2Q1ZmIzYjQ2Mzk0IiwidCI6IjQxNDhhNmRlLTBkZDEtNGQwNC1hNGM1LTc4ZTM3NGU0ZjZkNiIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>

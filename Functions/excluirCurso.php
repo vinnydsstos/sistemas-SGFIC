@@ -14,11 +14,11 @@ if (isset($_GET['id'])) {
     $curso->deletar();
     
     // Redireciona de volta para a página que lista todos os cursos após a exclusão
-    header('Location: cursos.php');
+    header('Location: ../View/cursos.php');
     exit();
 } else {
     // Caso o ID não tenha sido fornecido, redireciona de volta para a página que lista todos os cursos
-    header('Location: cursos.php');
+    header('Location: ../View/cursos.php');
     exit();
 }
 ?>

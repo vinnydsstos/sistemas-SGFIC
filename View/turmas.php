@@ -55,7 +55,7 @@
                     echo "<td>{$turma->getStatus()}</td>";
                     echo "<td>";
                     echo "<div class='d-flex'>";
-                    echo "<a href='../Functions/editarTurma.php?id={$turma->getIdTurma()}' class='btn btn-sm btn-primary'>
+                    echo "<a href='editarTurma.php?id={$turma->getIdTurma()}' class='btn btn-sm btn-primary'>
                             <i class='bi bi-pencil'></i>
                         </a>";
                     // Botão de exclusão com modal de confirmação

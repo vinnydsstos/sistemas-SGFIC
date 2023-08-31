@@ -21,7 +21,7 @@ $docentes = Docente::buscarTodos();
 
 <?php include_once '../sharedComponents/navbar.php'; ?>
 
-<?php $nome_pagina = "Encontros"; ?>
+<?php $nome_pagina = "Aulas"; ?>
 <?php include_once '../sharedComponents/header.php'; ?>
 
 <body class="container pl-0 pr-0">
@@ -45,7 +45,7 @@ $docentes = Docente::buscarTodos();
                     <th>Turma</th>
                     <th>Curso</th>
                     <th>Ambiente</th>
-                    <th>Data do Encontro</th>
+                    <th>Data do Aula</th>
                     <th>Início/Termino</th>
                     <th>Ações</th>
                 </tr>
@@ -68,7 +68,7 @@ $docentes = Docente::buscarTodos();
                     echo "<td>{$encontro->getInicio()} - {$encontro->getTermino()}</td>";
                     echo "<td>";
                     echo "<div style='display:flex'>";
-                    echo "<a href='../Functions/editarEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-sm btn-primary'>
+                    echo "<a href='editarEncontro.php?id={$encontro->getIdEncontro()}' class='btn btn-sm btn-primary'>
                         <i class='bi bi-pencil'></i>
                     </a>";
                     echo "<a href='#' class='btn btn-sm btn-danger ml-2' data-toggle='modal' data-target='#deleteModal-{$encontro->getIdEncontro()}'>
