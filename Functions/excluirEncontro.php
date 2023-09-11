@@ -14,11 +14,11 @@ if (isset($_GET['id'])) {
     $encontro->deletar();
     
     // Redireciona de volta para a página que lista todos os encontros após a exclusão
-    header('Location: encontros.php');
+    header('Location: ../View/encontros.php');
     exit();
 } else {
     // Caso o ID não tenha sido fornecido, redireciona de volta para a página que lista todos os encontros
-    header('Location: encontros.php');
+    header('Location: ../View/encontros.php');
     exit();
 }
 ?>

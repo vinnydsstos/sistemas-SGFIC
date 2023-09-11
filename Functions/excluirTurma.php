@@ -14,11 +14,11 @@ if (isset($_GET['id'])) {
     $turma->deletar();
     
     // Redireciona de volta para a página que lista todas as turmas após a exclusão
-    header('Location: turmas.php');
+    header('Location: ../View/turmas.php');
     exit();
 } else {
     // Caso o ID não tenha sido fornecido, redireciona de volta para a página que lista todas as turmas
-    header('Location: turmas.php');
+    header('Location: ../View/turmas.php');
     exit();
 }
 ?>

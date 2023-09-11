@@ -3,7 +3,7 @@ include_once '../Database/dbConnect.php';
 include_once '../Model/Turma.php';
 include_once '../Model/Ambiente.php';
 include_once '../Model/encontro.php';
-include_once 'verificador.php';
+include_once '../Functions/verificador.php';
 
 $turmas = Turma::buscarTodos();
 $ambientes = Ambiente::buscarTodos();

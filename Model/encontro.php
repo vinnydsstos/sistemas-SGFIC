@@ -50,9 +50,14 @@ class Encontro
         $stmt->close();
     }
 
-    public static function buscarTodos()
+    public static function buscarTodos($limit = null)
     {
         $sqlBuscar = "SELECT * FROM Encontro";
+
+        if ($limit != null) {
+            $sqlBuscar = $sqlBuscar . " LIMIT " . $limit;
+        }
+
         $rs = Connect::getConnection()->query($sqlBuscar);
         $encontros = array();
         while ($row = mysqli_fetch_row($rs)) {
@@ -65,6 +70,48 @@ class Encontro
             $encontro->idAmbiente = $row[5];
             array_push($encontros, $encontro);
         }
+        return $encontros;
+    }
+
+    public static function buscarEncontros($idDocente = null, $idCurso = null, $idTurma = null, $status = null)
+    {
+        $conexao = Connect::getConnection();
+        $query = "SELECT * FROM Encontro e, Turma t WHERE e.idTurma = t.idTurma";
+        
+        
+        if ($idCurso !== null) {
+            $query .= " AND t.idCurso = $idCurso";
+        }
+
+
+        if ($idTurma !== null) {
+            $query .= " AND e.idTurma = $idTurma";
+        }
+
+        if ($idDocente !== null &&  $idDocente != 'all') {
+            $query .= " AND t.idDocenteResponsavel = $idDocente";
+        }
+
+
+        if ($status !== null) {
+            $query .= " AND t.status = '$status'";
+        }
+
+       //echo $query;
+        $rs = $conexao->query($query);
+        $encontros = array();
+
+        while ($row = mysqli_fetch_assoc($rs)) {
+            $encontro = new Encontro();
+            $encontro->idEncontro = $row['idEncontro'];
+            $encontro->dataDoEncontro = $row['dataDoEncontro'];
+            $encontro->inicio = $row['inicio'];
+            $encontro->termino = $row['termino'];
+            $encontro->idTurma = $row['idTurma'];
+            $encontro->idAmbiente = $row['idAmbiente'];
+            array_push($encontros, $encontro);
+        }
+
         return $encontros;
     }
 
@@ -135,50 +182,40 @@ class Encontro
         return $encontros;
     }
 
-    public static function buscarEncontrosPorPeriodoEProfessor($mesInicial, $mesFinal, $docenteSelecionado)
+    public static function buscarEncontrosPorAnoMesEProfessor($ano, $mesInicial, $mesFinal, $docenteSelecionado)
     {
         $encontros = array();
 
-        // Query para buscar os encontros para o período entre mes_inicial e mes_final
         $sql = "SELECT * FROM Encontro";
-
-        // If a docente is selected, join the Turma table to filter encontros by the docente's ID
         $sql .= " INNER JOIN Turma ON Encontro.idTurma = Turma.idTurma";
         $sql .= " INNER JOIN Docente ON Turma.idDocenteResponsavel = Docente.nif";
 
-        // Define um array vazio para os tipos de dados dos parâmetros
         $paramTypes = "";
 
         if ($docenteSelecionado !== "all") {
             $sql .= " WHERE Docente.nif = ?";
-            $paramTypes .= "s"; // Adiciona o tipo de dado para string (docenteSelecionado é string)
+            $paramTypes .= "s";
         }
 
+        $sql .= " AND YEAR(dataDoEncontro) = ?";
         $sql .= " AND MONTH(dataDoEncontro) BETWEEN ? AND ?";
-        $paramTypes .= "ii"; // Adiciona os tipos de dados para inteiros (mesInicial e mesFinal são inteiros)
+        $paramTypes .= "iii";
 
-        // Get the database connection
         $conn = Connect::getConnection();
 
-        // Prepare the SQL statement
         $stmt = $conn->prepare($sql);
 
-        // Check if the statement preparation was successful
         if ($stmt) {
-            // Combina os parâmetros dinamicamente de acordo com a condição
             if ($docenteSelecionado === "all") {
-                $stmt->bind_param($paramTypes, $mesInicial, $mesFinal);
+                $stmt->bind_param($paramTypes, $ano, $mesInicial, $mesFinal);
             } else {
-                $stmt->bind_param($paramTypes, $docenteSelecionado, $mesInicial, $mesFinal);
+                $stmt->bind_param($paramTypes, $docenteSelecionado, $ano, $mesInicial, $mesFinal);
             }
 
-            // Execute the statement
             $stmt->execute();
 
-            // Get the result of the query
             $result = $stmt->get_result();
 
-            // Check if there are encontros for the selected period and docente
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $encontro = new Encontro();
@@ -192,14 +229,10 @@ class Encontro
                 }
             }
 
-            // Close the statement
             $stmt->close();
         } else {
             echo "Error preparing SQL statement: " . $conn->error;
         }
-
-        // Close the connection
-        // $conn->close();
 
         return $encontros;
     }

@@ -54,7 +54,7 @@
                         <td><?php echo $docente->getCargaHoraria(); ?></td>
 
                         <td style="display:flex; ">
-                            <a href='../Functions/editarDocente.php?nif=<?php echo $docente->getNif(); ?>' class='btn btn-sm btn-primary'>
+                            <a href='editarDocente.php?nif=<?php echo $docente->getNif(); ?>' class='btn btn-sm btn-primary'>
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <button type="button" class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#confirmModal-<?php echo $docente->getNif(); ?>">

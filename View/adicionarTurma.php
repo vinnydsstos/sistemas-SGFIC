@@ -70,7 +70,7 @@ $cursos = Curso::buscarTodos();
             </div>
             <div class="form-group">
                 <label for="numero_vagas">Número de Vagas:</label>
-                <input type="number" class="form-control" id="numero_vagas" name="numero_vagas" required>
+                <input type="number" value="20" class="form-control" id="numero_vagas" name="numero_vagas" required>
             </div>
             <div class="form-group">
                 <label for="data_inicio">Data de Início:</label>

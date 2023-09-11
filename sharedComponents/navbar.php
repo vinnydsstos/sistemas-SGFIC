@@ -12,17 +12,17 @@
                     Turmas
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownTurmas">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/turmas.php">Listar Turmas</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/turmas.php">Gerenciar Turmas</a>
                     <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarTurma.php">Nova Turma</a>
                 </div>
             </li>
             <li class="nav-item dropdown <?php if ($_SERVER['PHP_SELF'] === $path . 'View/encontros.php' || $_SERVER['PHP_SELF'] === $path . 'View/adicionarEncontro.php') echo 'active'; ?>">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEncontros" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Encontros
+                    Aulas
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownEncontros">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/encontros.php">Listar encontros</a>
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarEncontro.php">Agendar encontros</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/encontros.php">Gerenciar Aulas</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarEncontro.php">Agendar Aulas</a>
                 </div>
             </li>
             <li class="nav-item dropdown <?php if ($_SERVER['PHP_SELF'] === $path . 'View/docentes.php' || $_SERVER['PHP_SELF'] === $path . 'View/adicionarDocente.php') echo 'active'; ?>">
@@ -30,7 +30,7 @@
                     Docentes
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownDocentes">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/docentes.php">Listar Docentes</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/docentes.php">Gerenciar Docentes</a>
                     <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarDocente.php">Novo Docente</a>
                 </div>
             </li>
@@ -39,7 +39,7 @@
                     Cursos
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
-                    <a class="dropdown-item" href="<?php echo $path; ?>View/cursos.php">Listar Cursos</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/cursos.php">Gerenciar Cursos</a>
                     <a class="dropdown-item" href="<?php echo $path; ?>View/adicionarCurso.php">Novo Curso</a>
                 </div>
             </li>

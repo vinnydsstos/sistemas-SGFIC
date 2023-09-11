@@ -29,3 +29,7 @@ Bem-vindo ao **Sistema de Gestão de Aulas e Turmas**! Este projeto é uma solu�
 2. Crie um banco de dados MySQL para o sistema.
 3. Importe o arquivo `Criacao_Base.sql` para criar a estrutura do banco de dados.
 4. Configure as informações de conexão com o banco de dados no arquivo `config.php`.
+
+## Licença
+
+Todos os direitos reservados ao SENAI-SP e ao criador Vinicius dos Santos
