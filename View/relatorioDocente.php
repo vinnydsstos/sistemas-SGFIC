@@ -8,77 +8,48 @@ $encontro = new Encontro();
 $docente = new Docente();
 
 $meses = [
-    1 => 'Janeiro',
-    2 => 'Fevereiro',
-    3 => 'Março',
-    4 => 'Abril',
-    5 => 'Maio',
-    6 => 'Junho',
-    7 => 'Julho',
-    8 => 'Agosto',
-    9 => 'Setembro',
-    10 => 'Outubro',
-    11 => 'Novembro',
-    12 => 'Dezembro'
+    1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
+    5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+    9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
 ];
 
-$anos = [
-    1 => 2023,
-    2 => 2024,
-];
-
+$anos = [1 => 2023, 2 => 2024];
 $anoCorrente = 2023;
 
 $turmas = Turma::buscarTodos();
 $ambientes = Ambiente::buscarTodos();
 
-$anoCorrente = isset($_GET['ano']) ? intval($_GET['ano']) : date('Y');
-$mesInicial = isset($_GET['mes_inicial']) ? intval($_GET['mes_inicial']) : date('m');
-$mesFinal = isset($_GET['mes_final']) ? intval($_GET['mes_final']) : date('m');
+$anoCorrente = isset($_POST['ano']) ? intval($_POST['ano']) : date('Y');
+$mesInicial = isset($_POST['mes_inicial']) ? intval($_POST['mes_inicial']) : date('m');
+$mesFinal = isset($_POST['mes_final']) ? intval($_POST['mes_final']) : date('m');
 $anoAtual = intval(date('Y'));
 
 $docentes = $docente->buscarTodos();
-$docenteSelecionado = (isset($_GET['docente']) && $_GET['docente'] !== 'all') ? $_GET['docente'] : 'all';
+$docenteSelecionado = ($_POST['docente'] ?? 'all') !== 'all' ? $_POST['docente'] : 'all';
 
-$encontros = $encontro->buscarEncontrosPorAnoMesEProfessor($anoCorrente, $mesInicial, $mesFinal, $docenteSelecionado);
+$encontros = $_SERVER['REQUEST_METHOD'] === 'POST' ? $encontro->buscarEncontrosPorAnoMesEProfessor($anoCorrente, $mesInicial, $mesFinal, $docenteSelecionado) : array();
 
-$turmasData = [];
-$ambientesData = [];
-
-foreach ($turmas as $turma) {
-    $turmasData[$turma->getIdTurma()] = $turma;
-}
-
-foreach ($ambientes as $ambiente) {
-    $ambientesData[$ambiente->getIdSala()] = $ambiente;
-}
+$turmasData = array_combine(array_map(function ($turma) {
+    return $turma->getIdTurma();
+}, $turmas), $turmas);
+$ambientesData = array_combine(array_map(function ($ambiente) {
+    return $ambiente->getIdSala();
+}, $ambientes), $ambientes);
 
 $encontrosPorTurma = [];
-foreach ($encontros as $encontro) {
-    $turmaId = $encontro->getIdTurma();
-    if (!isset($encontrosPorTurma[$turmaId])) {
-        $encontrosPorTurma[$turmaId] = [];
-    }
-    $encontrosPorTurma[$turmaId][] = $encontro;
-}
-
 $totalEncontrosPorTurma = [];
 $totalHorasAgendadasPorTurma = [];
 
-$encontrosPorTurma = [];
 foreach ($encontros as $encontro) {
     $turmaId = $encontro->getIdTurma();
-    if (!isset($encontrosPorTurma[$turmaId])) {
-        $encontrosPorTurma[$turmaId] = [];
-    }
     $encontrosPorTurma[$turmaId][] = $encontro;
 
-    $totalEncontrosPorTurma[$turmaId] = isset($totalEncontrosPorTurma[$turmaId]) ? $totalEncontrosPorTurma[$turmaId] + 1 : 1;
+    $totalEncontrosPorTurma[$turmaId] = ($totalEncontrosPorTurma[$turmaId] ?? 0) + 1;
 
     $inicio = new DateTime($encontro->getInicio());
     $termino = new DateTime($encontro->getTermino());
     $interval = $inicio->diff($termino);
-    $totalHorasAgendadasPorTurma[$turmaId] = isset($totalHorasAgendadasPorTurma[$turmaId]) ? $totalHorasAgendadasPorTurma[$turmaId] + ($interval->h * 60) + $interval->i : ($interval->h * 60) + $interval->i;
+    $totalHorasAgendadasPorTurma[$turmaId] = ($totalHorasAgendadasPorTurma[$turmaId] ?? 0) + ($interval->h * 60) + $interval->i;
 }
 
 
@@ -100,7 +71,7 @@ foreach ($encontros as $encontro) {
             <h1>Relatório do Docente</h1>
         </div>
 
-        <form class="mb-5 card p-5" style="background-color:beige" method="GET" action="relatorioDocente.php">
+        <form class="mb-5 card p-5" style="background-color:beige" method="POST" action="relatorioDocente.php">
             <div class="form-row">
                 <div class="form-group col-md-3 mb-0">
                     <label for="docente">Docente:</label>
@@ -141,14 +112,15 @@ foreach ($encontros as $encontro) {
                 <div class="form-group col-md-3 mb-0">
                     <label for="mes_ano">Ano:</label>
                     <select class="form-control" id="ano" name="ano">
-                        <option>Selecione o ano</option>
                         <?php
                         foreach ($anos as $ano) {
-                            echo "<option value='$ano'>$ano</option>";
+                            $selected = ($ano == $anoCorrente) ? 'selected' : '';
+                            echo "<option value='$ano' $selected>$ano</option>";
                         }
                         ?>
                     </select>
                 </div>
+
 
             </div>
             <br>

@@ -58,3 +58,8 @@ CREATE TABLE Curso (
     requisitos TEXT,
     Sigla VARCHAR(10)
 );
+
+CREATE TABLE Area (
+    idArea INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL
+)

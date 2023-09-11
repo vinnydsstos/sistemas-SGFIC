@@ -50,9 +50,14 @@ class Encontro
         $stmt->close();
     }
 
-    public static function buscarTodos()
+    public static function buscarTodos($limit = null)
     {
         $sqlBuscar = "SELECT * FROM Encontro";
+
+        if ($limit != null) {
+            $sqlBuscar = $sqlBuscar . " LIMIT " . $limit;
+        }
+
         $rs = Connect::getConnection()->query($sqlBuscar);
         $encontros = array();
         while ($row = mysqli_fetch_row($rs)) {
@@ -65,6 +70,48 @@ class Encontro
             $encontro->idAmbiente = $row[5];
             array_push($encontros, $encontro);
         }
+        return $encontros;
+    }
+
+    public static function buscarEncontros($idDocente = null, $idCurso = null, $idTurma = null, $status = null)
+    {
+        $conexao = Connect::getConnection();
+        $query = "SELECT * FROM Encontro e, Turma t WHERE e.idTurma = t.idTurma";
+        
+        
+        if ($idCurso !== null) {
+            $query .= " AND t.idCurso = $idCurso";
+        }
+
+
+        if ($idTurma !== null) {
+            $query .= " AND e.idTurma = $idTurma";
+        }
+
+        if ($idDocente !== null &&  $idDocente != 'all') {
+            $query .= " AND t.idDocenteResponsavel = $idDocente";
+        }
+
+
+        if ($status !== null) {
+            $query .= " AND t.status = '$status'";
+        }
+
+       //echo $query;
+        $rs = $conexao->query($query);
+        $encontros = array();
+
+        while ($row = mysqli_fetch_assoc($rs)) {
+            $encontro = new Encontro();
+            $encontro->idEncontro = $row['idEncontro'];
+            $encontro->dataDoEncontro = $row['dataDoEncontro'];
+            $encontro->inicio = $row['inicio'];
+            $encontro->termino = $row['termino'];
+            $encontro->idTurma = $row['idTurma'];
+            $encontro->idAmbiente = $row['idAmbiente'];
+            array_push($encontros, $encontro);
+        }
+
         return $encontros;
     }
 

@@ -95,7 +95,7 @@ class Turma
             $turma->dataDeInicio = $row['dataDeInicio'];
             $turma->dataDeFinalizacao = $row['dataDeFinalizacao'];
             $turma->status = $row['status'];
-            array_push($turmas,$turma);
+            array_push($turmas, $turma);
         }
 
         return $turmas;
@@ -120,6 +120,57 @@ class Turma
             return $turma;
         }
     }
+
+    public static function buscaPorDocente($idDocenteResponsavel = null, $idCurso = null, $status = null, $dataDeInicio = null, $dataDeFinalizacao = null, $ano = null)
+    {
+        $conexao = Connect::getConnection();
+
+        $query = "SELECT * FROM Turma WHERE 1";
+
+        if ($idDocenteResponsavel !== null) {
+            $query .= " AND idDocenteResponsavel = $idDocenteResponsavel";
+        }
+
+        if ($idCurso !== null) {
+            $query .= " AND idCurso = $idCurso";
+        }
+
+        if ($status !== null) {
+            $query .= " AND status = '$status'";
+        }
+
+        if ($dataDeInicio !== null) {
+            $query .= " AND dataDeInicio >= '$dataDeInicio'";
+        }
+
+        if ($dataDeFinalizacao !== null) {
+            $query .= " AND dataDeFinalizacao <= '$dataDeFinalizacao'";
+        }
+
+        if ($ano !== null) {
+            $query .= " AND YEAR(dataDeInicio) = $ano";
+        }
+
+
+        $rs = $conexao->query($query);
+        $turmas = array();
+
+        while ($row = mysqli_fetch_assoc($rs)) {
+            $turma = new Turma();
+            $turma->idTurma = $row['idTurma'];
+            $turma->idDocenteResponsavel = $row['idDocenteResponsavel'];
+            $turma->idCurso = $row['idCurso'];
+            $turma->numeroDeVagas = $row['numeroDeVagas'];
+            $turma->nome = $row['nome'];
+            $turma->dataDeInicio = $row['dataDeInicio'];
+            $turma->dataDeFinalizacao = $row['dataDeFinalizacao'];
+            $turma->status = $row['status'];
+            array_push($turmas, $turma);
+        }
+
+        return $turmas;
+    }
+
 
     public static function buscarPorNome($nomeTurma)
     {
