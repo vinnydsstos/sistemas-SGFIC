@@ -59,6 +59,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
                     <a class="dropdown-item" href="<?php echo $path; ?>View/exportarBaseDeDados.php">Exportar base de dados</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/parametrizacao.php">Parametrização</a>
                 </div>
             </li>
 

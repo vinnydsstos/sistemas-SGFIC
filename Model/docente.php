@@ -1,6 +1,8 @@
-<?php include_once '../Database/dbConnect.php';
+<?php include_once __DIR__ . '/../Database/dbConnect.php';
 
-class Docente {
+
+class Docente
+{
 
     private $nif;
     private $NomeCompleto;
@@ -10,7 +12,8 @@ class Docente {
     private $inicioDaJornada;
     private $fimDaJornada;
 
-    public function salvar() {
+    public function salvar()
+    {
         $conn = Connect::getConnection();
 
         $sqlSalvar = "INSERT INTO Docente(nif, NomeCompleto, areaDeAtuacao, tipoDeContratacao, cargaHoraria, inicioDaJornada, fimDaJornada) 
@@ -22,18 +25,20 @@ class Docente {
         $stmt->close();
     }
 
-    public function atualizar() {
+    public function atualizar()
+    {
         $conn = Connect::getConnection();
 
         $sqlAtualizar = "UPDATE Docente SET NomeCompleto = ?, areaDeAtuacao = ?, tipoDeContratacao = ?, cargaHoraria = ?, inicioDaJornada = ?, fimDaJornada = ? WHERE nif = ?";
-        
+
         $stmt = $conn->prepare($sqlAtualizar);
         $stmt->bind_param("ssssiss", $this->NomeCompleto, $this->areaDeAtuacao, $this->tipoDeContratacao, $this->cargaHoraria, $this->inicioDaJornada, $this->fimDaJornada, $this->nif);
         $stmt->execute();
         $stmt->close();
     }
 
-    public function deletar() {
+    public function deletar()
+    {
         $conn = Connect::getConnection();
 
         $sqlDeletar = "DELETE FROM Docente WHERE nif = ?";
@@ -43,7 +48,8 @@ class Docente {
         $stmt->close();
     }
 
-    public static function buscarTodos() {
+    public static function buscarTodos()
+    {
         $conn = Connect::getConnection();
 
         $sqlBuscar = "SELECT * FROM Docente ORDER BY nomecompleto ASC";
@@ -63,7 +69,8 @@ class Docente {
         return $docentes;
     }
 
-    public static function buscarPorNif($nif) {
+    public static function buscarPorNif($nif)
+    {
         $conn = Connect::getConnection();
 
         $sqlBuscar = "SELECT * FROM Docente WHERE nif = ?";
@@ -85,61 +92,111 @@ class Docente {
         return $docente;
     }
 
+    public static function buscarDocentesComPoucasAulas($mes, $indiceBaixoDeAulas)
+    {
+        $conn = Connect::getConnection();
+
+
+        $sql = "SELECT D.nif, COUNT(E.idEncontro) AS totalEncontros
+        FROM Docente D
+        LEFT JOIN Turma T ON D.nif = T.idDocenteResponsavel
+        LEFT JOIN Encontro E ON T.idTurma = E.idTurma
+        WHERE MONTH(E.dataDoEncontro) = ?
+        GROUP BY D.nif;";
+
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $mes);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+
+        $docentesComPoucasAulas = [];
+
+        while ($row = $result->fetch_assoc()) {
+            if ($row['totalEncontros'] < $indiceBaixoDeAulas) {
+                $docente = self::buscarPorNif($row['nif']);
+                $docentesComPoucasAulas[] = [
+                    'docente' => $docente,
+                    'totalEncontros' => $row['totalEncontros']
+                ];
+            }
+        }
     
-    public function setNif($nif) {
+        
+
+        return $docentesComPoucasAulas;
+    }
+
+
+
+    public function setNif($nif)
+    {
         $this->nif = $nif;
     }
 
-    public function getNif() {
+    public function getNif()
+    {
         return $this->nif;
     }
 
-    public function setNomeCompleto($NomeCompleto) {
+    public function setNomeCompleto($NomeCompleto)
+    {
         $this->NomeCompleto = $NomeCompleto;
     }
 
-    public function getNomeCompleto() {
+    public function getNomeCompleto()
+    {
         return $this->NomeCompleto;
     }
 
-    public function setAreaDeAtuacao($areaDeAtuacao) {
+    public function setAreaDeAtuacao($areaDeAtuacao)
+    {
         $this->areaDeAtuacao = $areaDeAtuacao;
     }
 
-    public function getAreaDeAtuacao() {
+    public function getAreaDeAtuacao()
+    {
         return $this->areaDeAtuacao;
     }
 
-    public function setTipoDeContratacao($tipoDeContratacao) {
+    public function setTipoDeContratacao($tipoDeContratacao)
+    {
         $this->tipoDeContratacao = $tipoDeContratacao;
     }
 
-    public function getTipoDeContratacao() {
+    public function getTipoDeContratacao()
+    {
         return $this->tipoDeContratacao;
     }
 
-    public function setCargaHoraria($cargaHoraria) {
+    public function setCargaHoraria($cargaHoraria)
+    {
         $this->cargaHoraria = $cargaHoraria;
     }
 
-    public function getCargaHoraria() {
+    public function getCargaHoraria()
+    {
         return $this->cargaHoraria;
     }
 
-    public function setInicioDaJornada($inicioDaJornada) {
+    public function setInicioDaJornada($inicioDaJornada)
+    {
         $this->inicioDaJornada = $inicioDaJornada;
     }
 
-    public function getInicioDaJornada() {
+    public function getInicioDaJornada()
+    {
         return $this->inicioDaJornada;
     }
 
-    public function setFimDaJornada($fimDaJornada) {
+    public function setFimDaJornada($fimDaJornada)
+    {
         $this->fimDaJornada = $fimDaJornada;
     }
 
-    public function getFimDaJornada() {
+    public function getFimDaJornada()
+    {
         return $this->fimDaJornada;
     }
-
 }
