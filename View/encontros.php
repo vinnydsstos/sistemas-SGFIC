@@ -9,7 +9,7 @@ include_once '../Model/Docente.php';
 $encontros = Encontro::buscarTodos(100);
 $docentes = Docente::buscarTodos();
 $cursos = Curso::buscarTodos();
-$turmas= Turma::buscarTodos();
+$turmas = Turma::buscarTodos();
 $anos = [2023, 2024];
 
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
                         <option value="all">Todos os Cursos</option>
                         <?php
                         foreach ($turmas as $tur) {
-                           echo "<option value='{$tur->getIdTurma()}'" . ($turmaSelecionada === $tur->getIdTurma() ? ' selected' : '') . ">{$tur->getNome()}</option>";
+                            echo "<option value='{$tur->getIdTurma()}'" . ($turmaSelecionada === $tur->getIdTurma() ? ' selected' : '') . ">{$tur->getNome()}</option>";
                         }
                         ?>
                     </select>
@@ -114,13 +114,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
         <table class="table table-striped" id="encontrosTable">
             <thead>
                 <tr>
-                    <th>Docente Responsável</th>
-                    <th>Turma</th>
-                    <th>Curso</th>
-                    <th>Ambiente</th>
-                    <th>Data do Aula</th>
-                    <th>Início/Termino</th>
-                    <th>Ações</th>
+                    <th class="text-center">Docente Responsável</th>
+                    <th class="text-center">Turma</th>
+                    <th class="text-center">Curso</th>
+                    <th class="text-center">Ambiente</th>
+                    <th class="text-center">Data do Aula</th>
+                    <th class="text-center">Início/Termino</th>
+                    <th class="text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -132,13 +132,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
                     $curso = Curso::buscarPorId($turma->getIdCurso());
                     ?>
                     <tr>
-                        <td><?= $docente->getNomeCompleto(); ?></td>
-                        <td><?= $turma->getNome(); ?></td>
-                        <td><?= $curso->getNome(); ?></td>
-                        <td><?= $ambiente->getIdentificador(); ?></td>
-                        <td><?= date('d/m/Y', strtotime($encontro->getDataDoEncontro())); ?></td>
-                        <td><?= $encontro->getInicio(); ?> - <?= $encontro->getTermino(); ?></td>
-                        <td>
+                        <td class="text-center"><?= $docente->getNomeCompleto(); ?></td>
+                        <td class="text-center"><?= $turma->getNome(); ?></td>
+                        <td class="text-center"><?= $curso->getNome(); ?></td>
+                        <td class="text-center"><?= $ambiente->getIdentificador(); ?></td>
+                        <td class="text-center"><?= date('d/m/Y', strtotime($encontro->getDataDoEncontro())); ?></td>
+                        <td class="text-center"><?= $encontro->getInicio(); ?> - <?= $encontro->getTermino(); ?></td>
+                        <td class="text-center">
                             <div style="display:flex">
                                 <a href="editarEncontro.php?id=<?= $encontro->getIdEncontro(); ?>" class="btn btn-sm btn-primary">
                                     <i class="bi bi-pencil"></i>
@@ -172,6 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+
     </div>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">

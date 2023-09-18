@@ -1,6 +1,9 @@
 <?php
 // Inclua a classe Curso
 include_once '../Model/curso.php';
+include_once '../Model/area.php';
+
+$areas = Area::buscarTodos();
 
 // Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $curso->setDescricao($_POST['descricao']);
     $curso->setRequisitos($_POST['requisitos']);
     $curso->setSigla($_POST['sigla']);
+    $curso->setIdArea($_POST['area']);
     
     // Salva o curso no banco de dados
     $curso->salvar();
@@ -68,6 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="sigla">Sigla:</label>
                 <input type="text" class="form-control" id="sigla" name="sigla" required>
+            </div>
+
+            <div class="form-group">
+                <label for="area">Meta de TI:</label>
+                <select class="form-control" id="area" name="area">
+                    <?php foreach($areas as $ar): ?>
+                        <option value="<?= $ar->getIdArea()?>"><?= $ar->getNome(); ?></option>
+                    <?php endforeach ?>
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Enviar</button>
