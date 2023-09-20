@@ -20,7 +20,7 @@ class Curso
         $conexao = Connect::getConnection();
         $stmt = $conexao->prepare("INSERT INTO Curso (nome, metaDeTI, carga_horaria, vigencia, descricao, requisitos, Sigla, idArea) 
                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssi", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->sigla, $this->area->idArea);
+        $stmt->bind_param("sssssssi", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->sigla, $this->getArea()->getIdArea());
         $stmt->execute();
         $stmt->close();
     }
@@ -29,7 +29,7 @@ class Curso
     {
         $conexao = Connect::getConnection();
         $stmt = $conexao->prepare("UPDATE Curso SET nome=?, metaDeTI=?, carga_horaria=?, vigencia=?, descricao=?, requisitos=?, Sigla=?, idArea=? WHERE idCurso=?");
-        $stmt->bind_param("sssssssii", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->sigla, $this->area->idArea, $this->idCurso);
+        $stmt->bind_param("sssssssii", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->sigla, $this->getArea()->getIdArea(), $this->idCurso);
         $stmt->execute();
         $stmt->close();
     }

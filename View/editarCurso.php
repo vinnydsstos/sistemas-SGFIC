@@ -22,7 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $curso->setDescricao($_POST['descricao']);
     $curso->setRequisitos($_POST['requisitos']);
     $curso->setSigla($_POST['sigla']);
-    $curso->setIdArea($_POST['idArea']);
+
+    $area = new Area();
+    $area->setIdArea($_POST['idArea']);
+
+    $curso->setArea($area);
 
     $curso->atualizar();
 
@@ -97,7 +101,7 @@ if (isset($_GET['id'])) {
                 <label for="area">Área:</label>
                 <select class="form-control" id="idArea" name="idArea">
                     <?php foreach($areas as $ar): ?>
-                        <option value="<?= $ar->getIdArea() ?>" <?php if ($ar->getIdArea() == $curso->getIdArea()) { echo " selected"; } ?>><?= $ar->getNome(); ?></option>
+                        <option value="<?= $ar->getIdArea() ?>" <?php if ($ar->getIdArea() == $curso->getArea()->getIdArea()) { echo " selected"; } ?>><?= $ar->getNome(); ?></option>
                     <?php endforeach ?>
                 </select>
             </div>

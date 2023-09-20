@@ -24,7 +24,7 @@ include_once '../sharedComponents/header.php';
             <thead>
                 <tr>
                     <th>Curso</th>
-                    <th>Area</th>
+                    <th>Área</th>
                     <th>Carga Horária</th>
                     <th>Requisitos</th>
                     <th>Descrição</th>

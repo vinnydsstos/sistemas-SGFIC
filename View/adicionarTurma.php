@@ -4,9 +4,7 @@ include_once '../Model/Turma.php';
 include_once '../Model/Docente.php';
 include_once '../Model/Curso.php';
 
-// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Cria um objeto Turma e preenche com os dados do formulário
     $turma = new Turma();
     $turma->setNome($_POST['nome']);
     $turma->setIdDocenteResponsavel($_POST['docente']);
@@ -14,20 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $turma->setNumeroDeVagas($_POST['numero_vagas']);
     $turma->setDataDeInicio($_POST['data_inicio']);
     $turma->setDataDeFinalizacao($_POST['data_finalizacao']);
-    $turma->setStatus($_POST['status']);
-    
+    $turma->setStatus($_POST['status']);    
 
-    // Salva a turma no banco de dados
     $turma->salvar();
 
     header("Location: turmas.php");
 }
 
-// Buscar todos os docentes do banco de dados
 $docentes = Docente::buscarTodos();
 
-// Buscar todos os cursos do banco de dados
 $cursos = Curso::buscarTodos();
+
+
 ?>
 
 <!DOCTYPE html>
@@ -80,7 +76,6 @@ $cursos = Curso::buscarTodos();
                 <label for="data_finalizacao">Data de Finalização:</label>
                 <input type="date" class="form-control" id="data_finalizacao" name="data_finalizacao" required>
             </div>
-
 
             <div class="form-group">
                 <label for="status">Status:</label>

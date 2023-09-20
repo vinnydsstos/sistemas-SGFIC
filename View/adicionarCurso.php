@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $curso->setDescricao($_POST['descricao']);
     $curso->setRequisitos($_POST['requisitos']);
     $curso->setSigla($_POST['sigla']);
-    $curso->setIdArea($_POST['area']);
+    $area = new Area();
+    $area->setIdArea($_POST['area']);
+    $curso->setArea($area);
     
     // Salva o curso no banco de dados
     $curso->salvar();
@@ -73,13 +75,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="sigla">Sigla:</label>
                 <input type="text" class="form-control" id="sigla" name="sigla" required>
             </div>
-
+                  
             <div class="form-group">
-                <label for="area">Meta de TI:</label>
-                <select class="form-control" id="area" name="area">
-                    <?php foreach($areas as $ar): ?>
-                        <option value="<?= $ar->getIdArea()?>"><?= $ar->getNome(); ?></option>
-                    <?php endforeach ?>
+                <label for="area">Area:</label>
+                <select class="form-control" id="area" name="area" required>
+                    <?php foreach ($areas as $area){?>
+                        <option value="<?= $area->getIdArea()?>"><?= $area->getNome() ?></option>;
+                    <?php } ?>
                 </select>
             </div>
 
