@@ -136,7 +136,7 @@ class Turma
         }
 
         if ($idCurso !== null) {
-            $query .= " AND idCurso = $idCurso";
+            $query .= " AND Turma.idCurso = $idCurso";
         }
 
         if ($status !== null) {
