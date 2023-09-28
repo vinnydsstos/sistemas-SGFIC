@@ -56,10 +56,6 @@ CREATE TABLE Curso (
     vigencia VARCHAR(50),
     descricao TEXT,
     requisitos TEXT,
-    Sigla VARCHAR(10)
+    Sigla VARCHAR(10),
+    idArea INT
 );
-
-CREATE TABLE Area (
-    idArea INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL
-)

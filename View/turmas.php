@@ -3,17 +3,19 @@
 include_once '../Model/Turma.php';
 include_once '../Model/Docente.php';
 include_once '../Model/Curso.php';
+include_once '../Model/Area.php';
 
 $turmas = Turma::buscarTodos();
 $docentes = Docente::buscarTodos();
 $cursos = Curso::buscarTodos();
+$areas = Area::buscarTodos();
 $anos = [2023, 2024];
 
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
-    $docenteSelecionado = ($_GET['docente'] != "all") ? $_GET['docente'] : null;
-    $idDocenteResponsavel = $_GET['docente'];
+    $idDocenteResponsavel = ($_GET['docente'] != "all") ? $_GET['docente'] : null;
+    $idArea = ($_GET['area'] != "all") ? $_GET['area'] : null;
     $idCurso = ($_GET['curso'] != "all" && isset($_GET['curso'])) ? $_GET['curso'] : null;
     $cursoSelecionado = $_GET['curso'];
     $status = ($_GET['status'] != "all" && isset($_GET['status'])) ? $_GET['status'] : null;
@@ -24,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
     $dataDeFimSelecionada = $_GET['final_apartirde'];
     $ano = ($_GET['ano'] != "all" && isset($_GET['ano'])) ? $_GET['ano'] : null;
 
-    $turmas = Turma::buscaPorDocente($idDocenteResponsavel, $idCurso, $status, $dataDeInicio, $dataDeFinalizacao, $ano);
+    $turmas = Turma::buscaPorDocente($idDocenteResponsavel, $idArea, $idCurso, $status, $dataDeInicio, $dataDeFinalizacao, $ano);
 }
 
 
@@ -57,10 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
                 </div>
 
                 <div class="form-group col-md-3 mb-0">
-                    <label for="area_curso">Área do Curso:</label>
-                    <select class="form-control" id="area_curso" name="area_curso">
+                    <label for="area">Área do Curso:</label>
+                    <select class="form-control" id="area" name="area">
                         <option value="all">Todas as Áreas</option>
-
+                        <?php
+                        foreach ($areas as $ar) {
+                            echo "<option value='{$ar->getIdArea()}'" . ($idArea === $ar->getIdArea() ? ' selected' : '') . ">{$ar->getNome()}</option>";
+                        }
+                        ?>
                     </select>
                 </div>
 
@@ -125,12 +131,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
         <table class="table table-striped" id="turmasTable">
             <thead>
                 <tr>
-                    <th>Nome da Turma</th>
-                    <th>Docente Responsável</th>
-                    <th>Curso</th>
-                    <th>Inicio/Termino</th>
-                    <th>Status</th>
-                    <th>Ações</th>
+                    <th class="text-center">Nome da Turma</th>
+                    <th class="text-center">Área</th>
+                    <th class="text-center">Docente Responsável</th>
+                    <th class="text-center">Curso</th>
+                    <th class="text-center">Inicio/Termino</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -138,15 +145,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['docente'])) {
                 foreach ($turmas as $turma) :
                     $docenteResponsavel = Docente::buscarPorNif($turma->getIdDocenteResponsavel());
                     $curso = Curso::buscarPorId($turma->getIdCurso());
+                    $area  = Area::buscarPorId($curso->getArea()->getIdArea());
                 ?>
                     <tr>
-                        <td><?= $turma->getNome() ?></td>
-                        <td><?= $docenteResponsavel ? $docenteResponsavel->getNomeCompleto() : '---' ?></td>
-                        <td><?= $curso ? $curso->getNome() : '---' ?></td>
-                        <td><?= date('d/m/Y', strtotime($turma->getDataDeInicio())) ?> - <?= date('d/m/Y', strtotime($turma->getDataDeFinalizacao())) ?></td>
-                        <td><?= $turma->getStatus() ?></td>
-                        <td>
-                            <div class="d-flex">
+                        <td class="text-center"><?= $turma->getNome() ?></td>
+                        <td class="text-center"><?= $area->getNome() ?></td>
+                        <td class="text-center"><?= $docenteResponsavel ? $docenteResponsavel->getNomeCompleto() : '---' ?></td>
+                        <td class="text-center"><?= $curso ? $curso->getNome() : '---' ?></td>
+                        <td class="text-center"><?= date('d/m/Y', strtotime($turma->getDataDeInicio())) ?> - <?= date('d/m/Y', strtotime($turma->getDataDeFinalizacao())) ?></td>
+                        <td class="text-center"><?= $turma->getStatus() ?></td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center">
                                 <a href="editarTurma.php?id=<?= $turma->getIdTurma() ?>" class="btn btn-sm btn-primary">
                                     <i class="bi bi-pencil"></i>
                                 </a>

@@ -1,3 +1,10 @@
+<?php
+
+include_once 'Model/docente.php';
+include_once 'parameters.php';
+
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -59,23 +66,23 @@
                 </div>
             </li>
             <li class="nav-item dropdown <?php if ($_SERVER['PHP_SELF'] === $path . 'View/relatorioMensal.php' || $_SERVER['PHP_SELF'] === $path . 'View/adicionarCurso.php') echo 'active'; ?>">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRelatorios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Relatório
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownRelatorios">
                     <a class="dropdown-item" href="<?php echo $path; ?>View/relatorioDocente.php">Relatório Docente</a>
                 </div>
             </li>
 
             <li class="nav-item dropdown <?php if ($_SERVER['PHP_SELF'] === $path . 'View/relatorioMensal.php' || $_SERVER['PHP_SELF'] === $path . 'View/adicionarCurso.php') echo 'active'; ?>">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Admin
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownCursos">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
                     <a class="dropdown-item" href="<?php echo $path; ?>View/exportarBaseDeDados.php">Exportar base de dados</a>
+                    <a class="dropdown-item" href="<?php echo $path; ?>View/parametrizacao.php">Parametrização</a>
                 </div>
             </li>
-
         </ul>
     </div>
 </nav>
@@ -84,6 +91,10 @@
 
 <body class="container pl-0 pr-0">
 
+
+
+    <?php $docentesComIndiceBaixoMesAtual = Docente::buscarDocentesComPoucasAulas(date('n'), $indiceMinimoDeAulas); ?>
+    <?php $docentesComIndiceBaixoProximoMes = Docente::buscarDocentesComPoucasAulas(date('n') + 1, $indiceMinimoDeAulas); ?>
 
     <div class="container-fluid">
         <div class="row" style="margin-left: -76px; margin-right: -76px;">
@@ -95,7 +106,40 @@
         </div>
     </div>
 
+    <?php if (count($docentesComIndiceBaixoMesAtual) != 0) { ?>
+        <h2 class="mt-5 mb-5">Professores com baixo índice de ocupação</h2>
+        <div class="card">
 
+            <div> *Professores com menos de <?= $indiceMinimoDeAulas ?> hora<?php if ($indiceMinimoDeAulas > 1) {
+                                                                                echo "s";
+                                                                            } ?> no mês atual estão listados abaixo</div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nome Docente</th>
+                        <th scope="col">Qtd Aulas (Mês <?= date('n') ?>) </th>
+                        <th scope="col">Qtd Aulas (Mês <?= date('n') + 1 ?>) </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($docentesComIndiceBaixoMesAtual as $index => $docente) { ?>
+                        <tr>
+                            <td><?= $docente['docente']->getNomeCompleto() ?></td>
+                            <td><?= $docente['totalEncontros'] ?></td>
+                            <?php if (isset($docentesComIndiceBaixoProximoMes[$index])) { ?>
+                                <td><?= $docentesComIndiceBaixoProximoMes[$index]['totalEncontros'] ?></td>
+                            <?php } else { ?>
+                                <td>0</td>
+                            <?php } ?>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+
+        </div>
+
+    <?php } ?>
 </body>
 
 </html>

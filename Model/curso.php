@@ -1,6 +1,7 @@
 <?php
 
 include_once '../Database/dbConnect.php';
+include_once 'area.php';
 
 class Curso
 {
@@ -11,14 +12,15 @@ class Curso
     private $vigencia;
     private $descricao;
     private $requisitos;
-    private $Sigla;
+    private $sigla;
+    private $area;
 
     public function salvar()
     {
         $conexao = Connect::getConnection();
-        $stmt = $conexao->prepare("INSERT INTO Curso (nome, metaDeTI, carga_horaria, vigencia, descricao, requisitos, Sigla) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssss", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->Sigla);
+        $stmt = $conexao->prepare("INSERT INTO Curso (nome, metaDeTI, carga_horaria, vigencia, descricao, requisitos, Sigla, idArea) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssi", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->sigla, $this->getArea()->getIdArea());
         $stmt->execute();
         $stmt->close();
     }
@@ -26,8 +28,8 @@ class Curso
     public function atualizar()
     {
         $conexao = Connect::getConnection();
-        $stmt = $conexao->prepare("UPDATE Curso SET nome=?, metaDeTI=?, carga_horaria=?, vigencia=?, descricao=?, requisitos=?, Sigla=? WHERE idCurso=?");
-        $stmt->bind_param("sssssssi", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->Sigla, $this->idCurso);
+        $stmt = $conexao->prepare("UPDATE Curso SET nome=?, metaDeTI=?, carga_horaria=?, vigencia=?, descricao=?, requisitos=?, Sigla=?, idArea=? WHERE idCurso=?");
+        $stmt->bind_param("sssssssii", $this->nome, $this->metaDeTI, $this->carga_horaria, $this->vigencia, $this->descricao, $this->requisitos, $this->sigla, $this->getArea()->getIdArea(), $this->idCurso);
         $stmt->execute();
         $stmt->close();
     }
@@ -44,7 +46,9 @@ class Curso
     public static function buscarTodos()
     {
         $conexao = Connect::getConnection();
-        $sql = "SELECT * FROM Curso ORDER BY nome";
+        $sql = "SELECT Curso.*, Area.nome AS NomeArea FROM Curso
+            JOIN Area ON Curso.idArea = Area.idArea
+            ORDER BY Curso.nome";
         $rs = $conexao->query($sql);
         $cursos = array();
         while ($row = $rs->fetch_assoc()) {
@@ -57,6 +61,10 @@ class Curso
             $curso->setDescricao($row['descricao']);
             $curso->setRequisitos($row['requisitos']);
             $curso->setSigla($row['Sigla']);
+            $area = new Area();
+            $area->setIdArea($row['idArea']); 
+            $area->setNome($row['NomeArea']);
+            $curso->setArea($area);
             $cursos[] = $curso;
         }
         return $cursos;
@@ -65,7 +73,9 @@ class Curso
     public static function buscarPorId($idCurso)
     {
         $conexao = Connect::getConnection();
-        $stmt = $conexao->prepare("SELECT * FROM Curso WHERE idCurso=?");
+        $stmt = $conexao->prepare("SELECT Curso.*, Area.nome AS NomeArea FROM Curso
+        JOIN Area ON Curso.idArea = Area.idArea
+        WHERE idCurso=? ORDER BY Curso.nome ");
         $stmt->bind_param("i", $idCurso);
         $stmt->execute();
         $rs = $stmt->get_result();
@@ -81,73 +91,103 @@ class Curso
             $curso->setDescricao($row['descricao']);
             $curso->setRequisitos($row['requisitos']);
             $curso->setSigla($row['Sigla']);
+            $area = new Area();
+            $area->setIdArea($row['idArea']); 
+            $area->setNome($row['NomeArea']);
+            $curso->setArea($area);
+
             return $curso;
         }
         return null;
     }
 
-    public function setIdCurso($idCurso) {
+    public function setIdCurso($idCurso)
+    {
         $this->idCurso = $idCurso;
     }
 
-    public function getIdCurso() {
+    public function getIdCurso()
+    {
         return $this->idCurso;
     }
 
-    public function setNome($nome) {
+    public function setNome($nome)
+    {
         $this->nome = $nome;
     }
 
-    public function getNome() {
+    public function getNome()
+    {
         return $this->nome;
     }
 
-    public function setMetaDeTI($metaDeTI) {
+    public function setMetaDeTI($metaDeTI)
+    {
         $this->metaDeTI = $metaDeTI;
     }
 
-    public function getMetaDeTI() {
+    public function getMetaDeTI()
+    {
         return $this->metaDeTI;
     }
 
-    public function setCargaHoraria($carga_horaria) {
+    public function setCargaHoraria($carga_horaria)
+    {
         $this->carga_horaria = $carga_horaria;
     }
 
-    public function getCargaHoraria() {
+    public function getCargaHoraria()
+    {
         return $this->carga_horaria;
     }
 
-    public function setVigencia($vigencia) {
+    public function setVigencia($vigencia)
+    {
         $this->vigencia = $vigencia;
     }
 
-    public function getVigencia() {
+    public function getVigencia()
+    {
         return $this->vigencia;
     }
 
-    public function setDescricao($descricao) {
+    public function setDescricao($descricao)
+    {
         $this->descricao = $descricao;
     }
 
-    public function getDescricao() {
+    public function getDescricao()
+    {
         return $this->descricao;
     }
 
-    public function setRequisitos($requisitos) {
+    public function setRequisitos($requisitos)
+    {
         $this->requisitos = $requisitos;
     }
 
-    public function getRequisitos() {
+    public function getRequisitos()
+    {
         return $this->requisitos;
     }
 
-    public function setSigla($Sigla) {
-        $this->Sigla = $Sigla;
+    public function setSigla($Sigla)
+    {
+        $this->sigla = $Sigla;
     }
 
-    public function getSigla() {
-        return $this->Sigla;
+    public function getSigla()
+    {
+        return $this->sigla;
+    }
+
+    public function setArea($area)
+    {
+        $this->area = $area;
+    }
+
+    public function getArea()
+    {
+        return $this->area;
     }
 }
-?>

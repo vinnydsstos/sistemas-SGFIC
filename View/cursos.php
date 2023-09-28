@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php include_once '../sharedComponents/head.php'; ?>
 
+<?php include_once '../Model/curso.php'; ?>
+<?php include_once '../sharedComponents/head.php'; ?>
 <?php include_once '../sharedComponents/navbar.php'; ?>
 
+<?php 
+
+$cursos = Curso::buscarTodos();
+?>
+
 <?php
+
 $nome_pagina = "Cursos";
 include_once '../sharedComponents/header.php';
+
 ?>
 
 <body class="container pl-0 pr-0">
@@ -15,7 +23,8 @@ include_once '../sharedComponents/header.php';
         <table class="table table-striped" id="cursosTable">
             <thead>
                 <tr>
-                    <th>Nome</th>
+                    <th>Curso</th>
+                    <th>Área</th>
                     <th>Carga Horária</th>
                     <th>Requisitos</th>
                     <th>Descrição</th>
@@ -24,16 +33,14 @@ include_once '../sharedComponents/header.php';
             </thead>
             <tbody>
                 <?php
-                // Inclua a classe Curso
-                include_once '../Model/curso.php';
 
-                // Busca todos os cursos do banco de dados
-                $cursos = Curso::buscarTodos();
+               
 
                 // Loop para exibir cada curso na tabela
                 foreach ($cursos as $curso) {
                     echo "<tr>";
                     echo "<td>{$curso->getNome()}</td>";
+                    echo "<td>{$curso->getArea()->getNome()}</td>";
                     echo "<td>{$curso->getCargaHoraria()}</td>";
                     echo "<td>{$curso->getRequisitos()}</td>";
                     echo "<td>{$curso->getDescricao()}</td>";

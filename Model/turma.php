@@ -121,18 +121,22 @@ class Turma
         }
     }
 
-    public static function buscaPorDocente($idDocenteResponsavel = null, $idCurso = null, $status = null, $dataDeInicio = null, $dataDeFinalizacao = null, $ano = null)
+    public static function buscaPorDocente($idDocenteResponsavel = null, $idArea = null, $idCurso = null, $status = null, $dataDeInicio = null, $dataDeFinalizacao = null, $ano = null)
     {
         $conexao = Connect::getConnection();
 
-        $query = "SELECT * FROM Turma WHERE 1";
+        $query = "SELECT Turma.*, Curso.idArea FROM Turma INNER JOIN Curso ON Turma.idCurso = Curso.idCurso WHERE 1";
 
         if ($idDocenteResponsavel !== null) {
             $query .= " AND idDocenteResponsavel = $idDocenteResponsavel";
         }
 
+        if ($idArea !== null) {
+            $query .= " AND idArea = $idArea";
+        }
+
         if ($idCurso !== null) {
-            $query .= " AND idCurso = $idCurso";
+            $query .= " AND Turma.idCurso = $idCurso";
         }
 
         if ($status !== null) {
@@ -150,7 +154,6 @@ class Turma
         if ($ano !== null) {
             $query .= " AND YEAR(dataDeInicio) = $ano";
         }
-
 
         $rs = $conexao->query($query);
         $turmas = array();

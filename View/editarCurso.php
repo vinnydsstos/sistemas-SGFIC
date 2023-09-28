@@ -1,21 +1,20 @@
 <?php
 include_once '../Database/dbConnect.php';
 include_once '../Model/Curso.php';
+include_once '../Model/Area.php';
 
-// Verifica se o formulário foi enviado
+$areas = Area::buscarTodos();
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtenha o ID do curso a ser editado
     $idCurso = $_POST['idCurso'];
 
-    // Verifique se o curso existe no banco de dados
     $curso = Curso::buscarPorId($idCurso);
     if (!$curso) {
-        // Redirecione para a página de cursos se o curso não existir
         header("Location: cursos.php");
         exit;
     }
 
-    // Preencha o curso com os dados do formulário
     $curso->setNome($_POST['nome']);
     $curso->setMetaDeTI($_POST['meta_de_ti']);
     $curso->setCargaHoraria($_POST['carga_horaria']);
@@ -24,30 +23,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $curso->setRequisitos($_POST['requisitos']);
     $curso->setSigla($_POST['sigla']);
 
-    // Atualize o curso no banco de dados
+    $area = new Area();
+    $area->setIdArea($_POST['idArea']);
+
+    $curso->setArea($area);
+
     $curso->atualizar();
 
-    // Redirecione para a página de cursos após a edição
     header("Location: cursos.php");
     exit;
 }
 
-// Verifica se o parâmetro "id" foi passado na URL
 if (isset($_GET['id'])) {
     $idCurso = $_GET['id'];
 
-    // Buscar o curso pelo ID no banco de dados
     $curso = Curso::buscarPorId($idCurso);
     if (!$curso) {
-        // Redirecione para a página de cursos se o curso não existir
         header("Location: cursos.php");
         exit;
     }
 
-    // Formate a data de vigência no formato correto para o input
     $vigenciaFormatted = date('Y-m-d', strtotime($curso->getVigencia()));
 } else {
-    // Se o parâmetro "id" não foi passado, redirecione para a página de cursos
     header("Location: cursos.php");
     exit;
 }
@@ -66,7 +63,6 @@ if (isset($_GET['id'])) {
 <body class="container pl-0 pr-0">
     <div class="container container pl-5 pr-5 pb-5 mt-5">
         <form method="POST" action="editarCurso.php">
-            <!-- Inclua um campo oculto para enviar o ID do curso -->
             <input type="hidden" name="idCurso" value="<?php echo $curso->getIdCurso(); ?>">
 
             <div class="form-group">
@@ -99,6 +95,15 @@ if (isset($_GET['id'])) {
             <div class="form-group">
                 <label for="sigla">Sigla:</label>
                 <input type="text" class="form-control" id="sigla" name="sigla" value="<?php echo $curso->getSigla(); ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="area">Área:</label>
+                <select class="form-control" id="idArea" name="idArea">
+                    <?php foreach($areas as $ar): ?>
+                        <option value="<?= $ar->getIdArea() ?>" <?php if ($ar->getIdArea() == $curso->getArea()->getIdArea()) { echo " selected"; } ?>><?= $ar->getNome(); ?></option>
+                    <?php endforeach ?>
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar</button>
